@@ -183,17 +183,24 @@ model ExternalIngredient {
 }
 
 model VideoRecipe {
-  id           String   @id @default(uuid())
-  videoUrl     String   @unique
-  title        String
-  description  String?
-  transcript   String?  // Full video transcript
-  duration     Int?     // Video duration in seconds
-  platform     String   // YouTube, TikTok, Instagram
-  videoId      String   // Platform-specific ID
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  ingredients   String   @default("[]") // JSON array stored as string
+  instructions  String   @default("[]") // JSON array of instruction steps
+  cookTime      Int?     // In minutes
+  servings      Int?
+  sourceType    String   // "YouTube" or "TikTok"
+  videoId       String
+  sourceUrl     String   @unique
+  authorName    String
+  duration      Int      // Video duration in seconds
+  thumbnailUrl  String?
+  transcript    String?  // Full video transcript (for YouTube)
+  platform      String   // YouTube, TikTok, Instagram (for compatibility)
   extractedRecipeId String? // Link to ExternalRecipe if parsed
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([platform])
   @@index([videoId])

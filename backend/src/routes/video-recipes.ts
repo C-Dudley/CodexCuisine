@@ -1,18 +1,19 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
+import { scrapeVideoRecipeFromUrl } from "../services/videoRecipeScraper";
 
 const router = Router();
 const prisma = new PrismaClient();
 
 // Validation schemas
-const extractVideoRecipeSchema = z.object({
-  videoUrl: z.string().url("Invalid video URL"),
-  platform: z.enum(["YouTube", "TikTok", "Instagram"]),
+const scrapeVideoSchema = z.object({
+  url: z.string().url("Invalid URL format"),
 });
 
 const searchVideoRecipesSchema = z.object({
-  platform: z.string().optional(),
+  query: z.string().optional(),
+  sourceType: z.string().optional(),
   limit: z.coerce.number().optional().default(20),
   offset: z.coerce.number().optional().default(0),
 });
@@ -24,8 +25,16 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const where: any = {};
 
-    if (params.platform) {
-      where.platform = params.platform;
+    if (params.query) {
+      where.OR = [
+        { title: { contains: params.query, mode: "insensitive" } },
+        { description: { contains: params.query, mode: "insensitive" } },
+        { authorName: { contains: params.query, mode: "insensitive" } },
+      ];
+    }
+
+    if (params.sourceType) {
+      where.sourceType = params.sourceType;
     }
 
     const total = await prisma.videoRecipe.count({ where });
@@ -51,7 +60,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-// GET - Get single video recipe with extracted data
+// GET - Get single video recipe
 router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
@@ -64,45 +73,66 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
       return res.status(404).json({ error: "Video recipe not found" });
     }
 
-    // If recipe was extracted, include the extracted recipe data
-    let extractedRecipe = null;
-    if (videoRecipe.extractedRecipeId) {
-      extractedRecipe = await prisma.externalRecipe.findUnique({
-        where: { id: videoRecipe.extractedRecipeId },
-        include: { externalIngredients: true },
-      });
-    }
-
-    res.json({
-      ...videoRecipe,
-      extractedRecipe,
-    });
+    res.json(videoRecipe);
   } catch (error) {
     next(error);
   }
 });
 
-// POST - Extract recipe from video
+// POST - Scrape recipe from video URL
 router.post(
-  "/extract",
+  "/scrape",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const body = extractVideoRecipeSchema.parse(req.body);
+      const { url } = scrapeVideoSchema.parse(req.body);
 
-      // TODO: Implement actual video extraction logic
-      // For now, return a placeholder response
+      // Scrape the recipe
+      const scrapedRecipe = await scrapeVideoRecipeFromUrl(url);
 
-      res.status(501).json({
-        error: "Video extraction not yet implemented",
-        message:
-          "This endpoint will extract recipe data from YouTube, TikTok, Instagram videos",
-        videoUrl: body.videoUrl,
-        platform: body.platform,
+      // Create database entry
+      const videoRecipe = await prisma.videoRecipe.create({
+        data: {
+          title: scrapedRecipe.title,
+          description: scrapedRecipe.description,
+          platform: scrapedRecipe.sourceType.toLowerCase() as "youtube" | "tiktok" | "instagram",
+          sourceType: scrapedRecipe.sourceType,
+          videoId: scrapedRecipe.videoId,
+          sourceUrl: scrapedRecipe.sourceUrl,
+          authorName: scrapedRecipe.authorName,
+          duration: scrapedRecipe.duration,
+          thumbnailUrl: scrapedRecipe.thumbnailUrl,
+          ingredients: JSON.stringify(scrapedRecipe.ingredients),
+          instructions: JSON.stringify(scrapedRecipe.instructions),
+          cookTime: scrapedRecipe.cookTime,
+          servings: scrapedRecipe.servings,
+          transcript: "", // Will be populated in future versions
+        },
       });
-    } catch (error) {
+
+      res.status(201).json(videoRecipe);
+    } catch (error: any) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors });
+        return res.status(400).json({
+          success: false,
+          error: "Invalid input",
+          details: error.errors,
+        });
       }
+
+      if (error.message?.includes("Unsupported")) {
+        return res.status(400).json({
+          success: false,
+          error: error.message,
+        });
+      }
+
+      if (error.message?.includes("Could not extract")) {
+        return res.status(400).json({
+          success: false,
+          error: error.message,
+        });
+      }
+
       next(error);
     }
   }

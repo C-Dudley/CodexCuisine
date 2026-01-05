@@ -7,6 +7,7 @@ import {
   BookOpen,
   ShoppingCart,
   Settings,
+  Play,
 } from "lucide-react";
 
 export const Header: React.FC = () => {
@@ -39,6 +40,13 @@ export const Header: React.FC = () => {
             >
               <Search className="h-4 w-4" />
               Discover
+            </Link>
+            <Link
+              to="/videos"
+              className="text-gray-700 hover:text-primary-600 transition-colors flex items-center gap-1"
+            >
+              <Play className="h-4 w-4" />
+              Videos
             </Link>
             <Link
               to="/meal-plan"

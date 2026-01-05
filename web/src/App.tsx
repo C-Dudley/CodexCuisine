@@ -11,6 +11,7 @@ import MealPlanPage from "./pages/MealPlanPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
 import PreferencesPage from "./pages/PreferencesPage";
 import DiscoverPage from "./pages/DiscoverPage";
+import VideoDiscoveryPage from "./pages/VideoDiscoveryPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/discover" element={<DiscoverPage />} />
+          <Route path="/videos" element={<VideoDiscoveryPage />} />
           <Route path="/recipes/:id" element={<RecipePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/collections" element={<CollectionsPage />} />
