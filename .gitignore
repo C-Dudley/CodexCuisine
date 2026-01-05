@@ -57,3 +57,5 @@ android/build/
 
 # iOS
 ios/build/
+
+.github/

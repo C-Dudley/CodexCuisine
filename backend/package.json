@@ -1,7 +1,7 @@
 {
-  "name": "recipe-app-backend",
+  "name": "@codex-cuisine/backend",
   "version": "1.0.0",
-  "description": "Backend API for Recipe App",
+  "description": "Backend API for CodexCuisine",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
