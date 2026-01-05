@@ -1,7 +1,7 @@
 {
-  "name": "recipe-app-shared",
+  "name": "@codex-cuisine/shared",
   "version": "1.0.0",
-  "description": "Shared types and utilities for Recipe App",
+  "description": "Shared types and utilities for CodexCuisine",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

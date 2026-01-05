@@ -68,12 +68,57 @@ const RecipePage: React.FC = () => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         ingredientLists: [
-          { id: "1", quantity: 400, ingredient: { id: "1", name: "Spaghetti", unit: "g", category: "Pantry" } },
-          { id: "2", quantity: 150, ingredient: { id: "2", name: "Pancetta", unit: "g", category: "Meat" } },
-          { id: "3", quantity: 3, ingredient: { id: "3", name: "Large eggs", unit: "pieces", category: "Dairy" } },
-          { id: "4", quantity: 100, ingredient: { id: "4", name: "Parmesan cheese", unit: "g", category: "Dairy" } },
-          { id: "5", quantity: null, ingredient: { id: "5", name: "Black pepper", unit: "to taste", category: "Pantry" } },
-        ]
+          {
+            id: "1",
+            quantity: 400,
+            ingredient: {
+              id: "1",
+              name: "Spaghetti",
+              unit: "g",
+              category: "Pantry",
+            },
+          },
+          {
+            id: "2",
+            quantity: 150,
+            ingredient: {
+              id: "2",
+              name: "Pancetta",
+              unit: "g",
+              category: "Meat",
+            },
+          },
+          {
+            id: "3",
+            quantity: 3,
+            ingredient: {
+              id: "3",
+              name: "Large eggs",
+              unit: "pieces",
+              category: "Dairy",
+            },
+          },
+          {
+            id: "4",
+            quantity: 100,
+            ingredient: {
+              id: "4",
+              name: "Parmesan cheese",
+              unit: "g",
+              category: "Dairy",
+            },
+          },
+          {
+            id: "5",
+            quantity: null,
+            ingredient: {
+              id: "5",
+              name: "Black pepper",
+              unit: "to taste",
+              category: "Pantry",
+            },
+          },
+        ],
       });
     } finally {
       setLoading(false);
@@ -107,7 +152,9 @@ const RecipePage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Recipe Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Recipe Not Found
+          </h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <Link
             to="/"
@@ -150,7 +197,9 @@ const RecipePage: React.FC = () => {
           </div>
 
           <div className="p-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{recipe.title}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              {recipe.title}
+            </h1>
 
             {/* Recipe Meta */}
             <div className="flex items-center gap-6 mb-6 text-gray-600">
@@ -168,7 +217,9 @@ const RecipePage: React.FC = () => {
 
             {/* Add to Meal Plan Buttons */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Add to Meal Plan</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Add to Meal Plan
+              </h3>
               <div className="flex gap-3">
                 {["Breakfast", "Lunch", "Dinner"].map((mealType) => (
                   <button
@@ -185,7 +236,9 @@ const RecipePage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Ingredients */}
               <div className="lg:col-span-1">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Ingredients</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Ingredients
+                </h2>
                 <div className="space-y-3">
                   {recipe.ingredientLists.map((item) => (
                     <div key={item.id} className="flex items-center gap-3">
@@ -194,8 +247,10 @@ const RecipePage: React.FC = () => {
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
                       <span className="text-gray-700">
-                        {item.quantity ? `${item.quantity} ${item.ingredient.unit || ''}` : item.ingredient.unit || ''}
-                        {' '}{item.ingredient.name}
+                        {item.quantity
+                          ? `${item.quantity} ${item.ingredient.unit || ""}`
+                          : item.ingredient.unit || ""}{" "}
+                        {item.ingredient.name}
                       </span>
                     </div>
                   ))}
@@ -204,10 +259,15 @@ const RecipePage: React.FC = () => {
 
               {/* Instructions */}
               <div className="lg:col-span-2">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Instructions</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Instructions
+                </h2>
                 <div className="prose prose-gray max-w-none">
-                  {recipe.instructions.split('\n').map((step, index) => (
-                    <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+                  {recipe.instructions.split("\n").map((step, index) => (
+                    <p
+                      key={index}
+                      className="mb-4 text-gray-700 leading-relaxed"
+                    >
                       {step.trim()}
                     </p>
                   ))}
@@ -222,170 +282,3 @@ const RecipePage: React.FC = () => {
 };
 
 export default RecipePage;
-    carbs: 65,
-    fat: 18,
-  },
-};
-
-export const RecipePage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [isFavorited, setIsFavorited] = React.useState(false);
-
-  // In a real app, fetch recipe data based on id
-  const recipe = mockRecipe;
-
-  return (
-    <div className="max-w-4xl mx-auto">
-      {/* Recipe Header */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-        <img
-          src={recipe.image}
-          alt={recipe.title}
-          className="w-full h-64 md:h-96 object-cover"
-        />
-        <div className="p-6 md:p-8">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                {recipe.title}
-              </h1>
-              <p className="text-lg text-gray-600 mb-4">{recipe.description}</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setIsFavorited(!isFavorited)}
-                className={`p-2 rounded-full ${
-                  isFavorited
-                    ? "text-red-500 bg-red-50"
-                    : "text-gray-400 hover:text-red-500 hover:bg-red-50"
-                } transition-colors`}
-              >
-                <Heart
-                  className={`h-6 w-6 ${isFavorited ? "fill-current" : ""}`}
-                />
-              </button>
-              <button className="p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors">
-                <Share2 className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-
-          {/* Recipe Meta */}
-          <div className="flex flex-wrap items-center gap-6 mb-6">
-            <div className="flex items-center space-x-2">
-              <Clock className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-700">
-                {recipe.prepTime + recipe.cookTime} mins
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-700">{recipe.servings} servings</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <ChefHat className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-700">{recipe.difficulty}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-yellow-400 fill-current" />
-              <span className="text-gray-700">
-                {recipe.rating} ({recipe.reviewCount} reviews)
-              </span>
-            </div>
-          </div>
-
-          {/* Author */}
-          <div className="flex items-center space-x-3 mb-6">
-            <img
-              src={recipe.author.avatar}
-              alt={recipe.author.username}
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <p className="font-medium text-gray-900">
-                {recipe.author.firstName} {recipe.author.lastName}
-              </p>
-              <p className="text-sm text-gray-500">@{recipe.author.username}</p>
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2">
-            {recipe.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Ingredients */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Ingredients
-            </h2>
-            <ul className="space-y-3">
-              {recipe.ingredients.map((ingredient) => (
-                <li key={ingredient.id} className="flex items-center space-x-3">
-                  <input type="checkbox" className="rounded text-primary-600" />
-                  <span className="text-gray-700">
-                    {ingredient.amount &&
-                      `${ingredient.amount}${ingredient.unit} `}
-                    {ingredient.name}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Nutrition */}
-          <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              Nutrition (per serving)
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Calories</span>
-                <span className="font-medium">{recipe.nutrition.calories}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Protein</span>
-                <span className="font-medium">{recipe.nutrition.protein}g</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Carbs</span>
-                <span className="font-medium">{recipe.nutrition.carbs}g</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Fat</span>
-                <span className="font-medium">{recipe.nutrition.fat}g</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Instructions */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Instructions
-            </h2>
-            <div className="prose prose-gray max-w-none">
-              {recipe.instructions.split("\n\n").map((step, index) => (
-                <div key={index} className="mb-4">
-                  <p className="text-gray-700 leading-relaxed">{step.trim()}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};

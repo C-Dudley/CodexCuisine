@@ -18,8 +18,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  mealPlans MealPlan[]
-  favorites Favorite[]
+  mealPlans          MealPlan[]
+  favorites          Favorite[]
+  dietaryPreferences DietaryPreference[]
+  allergies          Allergy[]
 
   @@map("users")
 }
@@ -105,4 +107,91 @@ model Favorite {
 
   @@unique([userId, recipeId])
   @@map("favorites")
+}
+
+model DietaryPreference {
+  id        String   @id @default(uuid())
+  type      String   // vegan, vegetarian, keto, paleo, gluten-free, etc.
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
+  @@map("dietary_preferences")
+}
+
+model Allergy {
+  id        String   @id @default(uuid())
+  ingredient String  // ingredient name or allergen (nuts, dairy, shellfish, etc.)
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, ingredient])
+  @@map("allergies")
+}
+
+model ExternalRecipe {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  instructions String
+  cookTime    Int?
+  servings    Int?
+  imageUrl    String?
+  sourceType  String   // "web" or "video"
+  sourceUrl   String
+  sourceSite  String   // AllRecipes, FoodNetwork, YouTube, TikTok, etc.
+  fullText    String   // Full recipe text from source
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  externalIngredients ExternalIngredient[]
+
+  @@index([sourceSite])
+  @@index([createdAt])
+  @@map("external_recipes")
+}
+
+model ExternalIngredient {
+  id          String  @id @default(uuid())
+  name        String
+  quantity    Float?
+  unit        String?
+
+  // Relations
+  recipeId    String
+  recipe      ExternalRecipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("external_ingredients")
+}
+
+model VideoRecipe {
+  id           String   @id @default(uuid())
+  videoUrl     String   @unique
+  title        String
+  description  String?
+  transcript   String?  // Full video transcript
+  duration     Int?     // Video duration in seconds
+  platform     String   // YouTube, TikTok, Instagram
+  videoId      String   // Platform-specific ID
+  extractedRecipeId String? // Link to ExternalRecipe if parsed
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([platform])
+  @@index([videoId])
+  @@map("video_recipes")
 }

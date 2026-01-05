@@ -10,6 +10,9 @@ import { notFound } from "./middleware/errorHandler";
 // Routes
 import recipeRoutes from "./routes/recipes";
 import mealPlanRoutes from "./routes/meal-plan";
+import preferencesRoutes from "./routes/preferences";
+import externalRecipesRoutes from "./routes/external-recipes";
+import videoRecipesRoutes from "./routes/video-recipes";
 
 dotenv.config();
 
@@ -45,6 +48,9 @@ app.get("/health", (req, res) => {
 // API routes
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/meal-plan", mealPlanRoutes);
+app.use("/api/preferences", preferencesRoutes);
+app.use("/api/external-recipes", externalRecipesRoutes);
+app.use("/api/video-recipes", videoRecipesRoutes);
 
 // Error handling middleware
 app.use(notFound);

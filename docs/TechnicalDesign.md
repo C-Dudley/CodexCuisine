@@ -3,7 +3,7 @@
 
 2. Architectural Decisions
    Monorepo Strategy
-   Shared Package: We utilize a @recipe-app/shared directory to house TypeScript interfaces and Zod schemas. This ensures 100% type-safety; if a database column changes in the backend, the frontend will throw a build error rather than a runtime error.
+   Shared Package: We utilize `@codex-cuisine/shared` to house TypeScript interfaces and Zod schemas. This ensures 100% type-safety; if a database column changes in the backend, the frontend will throw a build error rather than a runtime error.
 
 Prisma ORM: Chosen for its type-safe query builder, allowing us to map our ERD directly into TypeScript objects.
 

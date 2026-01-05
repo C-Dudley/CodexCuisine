@@ -3,7 +3,7 @@
 
 [x] Prisma Setup: Schema created, client generated, SQLite database migrated and seeded with ingredients.
 
-[ ] Shared Types: Move your TypeScript interfaces (Recipe, User, MealPlan) into the shared/ folder so both the frontend and backend can use them.
+[x] Shared Types: Move your TypeScript interfaces (Recipe, User, MealPlan) into the shared/ folder so both the frontend and backend can use them.
 
 [-] Dockerize: Using SQLite for development instead of Docker - database setup complete.
 
@@ -12,27 +12,69 @@
 
 [x] API - Recipe Routes: Routes updated to work with simplified schema and now compile successfully.
 
-[ ] Web - Discovery Page: Build the main feed using your Tailwind styles to display recipe cards.
+[x] Web - Discovery Page: HomePage.tsx fully implemented with recipe grid, search, and pagination.
 
-[-] Web - Recipe Detail: Create the page that shows the full instructions and ingredients for a single dish. (Page exists but needs implementation)
+[x] Web - Recipe Detail: RecipePage.tsx fully implemented with instructions, ingredients, and add-to-meal-plan buttons.
 
 📅 Phase 3: The "Planner" (Your Main Feature)
 [x] API - Meal Plan Routes: Implement the POST and GET routes for the meal plan table.
 
 [x] Web - The Grid: Use the Copilot prompt to build the 7-day Meal Plan Chart with Drag & Drop.
 
-[-] Web - Action Logic: Ensure that dragging a recipe to a day successfully calls the backend and saves the state. (Implemented but needs end-to-end testing)
+[-] Web - Action Logic: Drag-and-drop integration with backend routes ready. (Implemented and ready for end-to-end testing)
 
 🛒 Phase 4: The Smart Shopping List
 [x] Service Logic: Use the "Aggregation" prompt to create the backend function that sums up ingredients.
 
-[ ] Web - Shopping View: Build a simple checklist page grouped by category (Produce, Meat, etc.).
+[x] Web - Shopping View: Build a simple checklist page grouped by category (Produce, Meat, etc.). (✅ COMPLETE: ShoppingListPage.tsx with toggle, delete, and category grouping)
 
-[ ] State Management: Implement the "Toggle" feature so users can check items off as they shop.
+[x] State Management: Toggle feature for checking items off as they shop. (✅ COMPLETE: Fully implemented in ShoppingListPage)
 
-🚀 Phase 5: Polishing & Deployment
-[ ] Auth: Implement JWT login/register so users can actually save their specific plans.
+🚀 Phase 5: User Preferences & Dietary Filters
+[x] Database Models: Add DietaryPreference and Allergy tables to track user preferences. (✅ COMPLETE: Migration applied)
 
-[ ] Responsiveness: Make sure the Meal Plan grid looks okay on a mobile browser (since your native mobile app is a "Future" feature).
+[x] API - Preference Routes: GET/POST/DELETE endpoints for managing user dietary preferences and allergies. (✅ COMPLETE: preferences.ts route created)
 
-[ ] Final README Update: Update your documentation with screenshots of your working diagrams.
+[ ] Web - Preference Settings: Create a settings page where users can toggle dietary preferences (vegan, vegetarian, keto, etc.) and add allergies.
+
+[ ] Search Filter Logic: Implement backend logic to filter recipes based on user preferences and allergies across all sources.
+
+🌐 Phase 6: Web Scraping & Recipe Discovery
+[ ] Scraper Service Setup: Create backend service using `cheerio` for parsing HTML from recipe websites.
+
+[ ] AllRecipes Scraper: Build scraper targeting AllRecipes.com recipe pages.
+
+[ ] Food Network Scraper: Build scraper targeting FoodNetwork.com recipe pages.
+
+[x] External Recipe API Routes: Create routes to store and retrieve scraped recipes from ExternalRecipe table. (✅ COMPLETE: external-recipes.ts route created)
+
+[ ] Web - Recipe Search & Import: Frontend page to search external recipes and save them to user collection.
+
+[ ] Filter by Preferences: Integrate dietary filter logic into external recipe search results.
+
+📹 Phase 7: Video Recipe Extraction
+[ ] YouTube Integration: Set up YouTube API integration to fetch video metadata and transcripts.
+
+[ ] Transcript Parser: Create service to extract recipe details from video transcripts.
+
+[x] Video Recipe Routes: API endpoints to store and retrieve video recipes from VideoRecipe table. (✅ COMPLETE: video-recipes.ts route created)
+
+[ ] TikTok/Instagram Support: Add support for parsing TikTok and Instagram recipe videos (using transcript or description parsing).
+
+[ ] Web - Video Recipe Browser: Frontend interface to browse and import video recipes with extracted ingredients.
+
+🔐 Phase 8: Authentication & Authorization
+[ ] Auth System: Implement JWT login/register so users can save their specific plans and preferences.
+
+[ ] User Profiles: Create user profile pages with saved recipes, preferences, and meal plans.
+
+[ ] Recipe Attribution: Ensure scraped recipes are properly attributed to original sources.
+
+📱 Phase 9: Polishing & Deployment
+[ ] Responsiveness: Make sure the app looks good on mobile browsers (meal plan grid, shopping list, scraper UI).
+
+[ ] Performance: Optimize database queries, add caching for external recipes.
+
+[ ] Error Handling: Improve error messages for scraping failures, missing data.
+
+[ ] Final README Update: Update documentation with screenshots and usage examples.

@@ -2,31 +2,14 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import MealPlanChart from "../components/MealPlanChart";
-
-interface MealPlan {
-  id: string;
-  date: Date;
-  mealType: string;
-  userId: string;
-  recipeId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  recipe: {
-    id: string;
-    title: string;
-    instructions: string;
-    cookTime: number | null;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-}
+import { Meal } from "@codex-cuisine/shared";
 
 const MealPlanPage: React.FC = () => {
   const {
     data: mealPlans,
     isLoading,
     error,
-  } = useQuery<MealPlan[]>({
+  } = useQuery<Meal[]>({
     queryKey: ["meal-plans"],
     queryFn: async () => {
       const response = await axios.get("/api/meal-plans");

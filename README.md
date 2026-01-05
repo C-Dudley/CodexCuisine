@@ -44,7 +44,7 @@ CodexCuisine is a modern, self-hosted recipe application inspired by Yummly. Bui
 ## Project Structure
 
 ```
-recipe-app-monorepo/
+codexcuisine-monorepo/
 ├── backend/           # Node.js/Express API server
 │   ├── prisma/        # Database schema and migrations
 │   ├── src/
@@ -147,7 +147,7 @@ sequenceDiagram
 
    ```bash
    git clone <repository-url>
-   cd recipe-app
+   cd codexcuisine
    ```
 
 ````
@@ -169,7 +169,7 @@ sequenceDiagram
    Edit `backend/.env` with your configuration:
 
    ```env
-   DATABASE_URL="postgresql://username:password@localhost:5432/recipe_app"
+    DATABASE_URL="postgresql://username:password@localhost:5432/codexcuisine"
    JWT_SECRET="your-super-secret-jwt-key"
    ```
 

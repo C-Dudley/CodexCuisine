@@ -1,13 +1,14 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
-import { HomePage } from "./pages/HomePage";
-import { RecipePage } from "./pages/RecipePage";
+import HomePage from "./pages/HomePage";
+import RecipePage from "./pages/RecipePage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { CollectionsPage } from "./pages/CollectionsPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import MealPlanPage from "./pages/MealPlanPage";
+import ShoppingListPage from "./pages/ShoppingListPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/collections" element={<CollectionsPage />} />
           <Route path="/meal-plan" element={<MealPlanPage />} />
+          <Route path="/shopping-list" element={<ShoppingListPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>

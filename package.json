@@ -1,5 +1,5 @@
 {
-  "name": "recipe-app-monorepo",
+  "name": "codexcuisine-monorepo",
   "version": "1.0.0",
   "description": "A Yummly-like recipe application with web and mobile support",
   "private": true,

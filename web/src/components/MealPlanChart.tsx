@@ -7,29 +7,10 @@ import {
 } from "@hello-pangea/dnd";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-
-interface Recipe {
-  id: string;
-  title: string;
-  instructions: string;
-  cookTime: number | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface MealPlan {
-  id: string;
-  date: Date;
-  mealType: string;
-  userId: string;
-  recipeId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  recipe: Recipe;
-}
+import { Meal } from "../../../shared/src";
 
 interface MealPlanChartProps {
-  initialData: MealPlan[];
+  initialData: Meal[];
 }
 
 const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
@@ -74,7 +55,7 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
   const today = new Date().toDateString();
 
   const groupedData = useMemo(() => {
-    const grouped: { [key: string]: { [mealType: string]: MealPlan[] } } = {};
+    const grouped: { [key: string]: { [mealType: string]: Meal[] } } = {};
     weekDays.forEach((day) => {
       const dayKey = day.toDateString();
       grouped[dayKey] = { Breakfast: [], Lunch: [], Dinner: [] };
@@ -120,9 +101,9 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
     });
   };
 
-  const getTotalTime = (plans: MealPlan[]) => {
+  const getTotalTime = (plans: Meal[]) => {
     return plans.reduce(
-      (total, plan) => total + (plan.recipe.cookTime || 0),
+      (total, plan) => total + (plan.recipe?.cookTime || 0),
       0
     );
   };
@@ -174,14 +155,18 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
                                 {...provided.dragHandleProps}
                                 className="bg-white border rounded p-2 mb-1 shadow-sm"
                               >
-                                <div className="text-sm font-medium">
-                                  {plan.recipe.title}
-                                </div>
-                                <div className="text-xs text-gray-600">
-                                  {plan.recipe.cookTime
-                                    ? `${plan.recipe.cookTime} min`
-                                    : "N/A"}
-                                </div>
+                                {plan.recipe && (
+                                  <>
+                                    <div className="text-sm font-medium">
+                                      {plan.recipe.title}
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                      {plan.recipe.cookTime
+                                        ? `${plan.recipe.cookTime} min`
+                                        : "N/A"}
+                                    </div>
+                                  </>
+                                )}
                               </div>
                             )}
                           </Draggable>

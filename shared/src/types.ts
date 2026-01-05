@@ -214,3 +214,63 @@ export interface NutritionInfo {
   carbs: number;
   fat: number;
 }
+
+// User Dietary Preferences & Allergies
+export interface DietaryPreference {
+  id: string;
+  type: string; // vegan, vegetarian, keto, paleo, gluten-free, etc.
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Allergy {
+  id: string;
+  ingredient: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// External Recipe (from web scraping)
+export interface ExternalRecipe {
+  id: string;
+  title: string;
+  description?: string;
+  instructions: string;
+  cookTime?: number;
+  servings?: number;
+  imageUrl?: string;
+  sourceType: "web" | "video";
+  sourceUrl: string;
+  sourceSite: string; // AllRecipes, FoodNetwork, YouTube, TikTok, etc.
+  fullText: string;
+  externalIngredients?: ExternalIngredient[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ExternalIngredient {
+  id: string;
+  name: string;
+  quantity?: number;
+  unit?: string;
+  recipeId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Video Recipe (from social media)
+export interface VideoRecipe {
+  id: string;
+  videoUrl: string;
+  title: string;
+  description?: string;
+  transcript?: string;
+  duration?: number;
+  platform: "YouTube" | "TikTok" | "Instagram";
+  videoId: string;
+  extractedRecipeId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

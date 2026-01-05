@@ -1,5 +1,5 @@
 {
-  "name": "recipe-app-mobile",
+  "name": "@codex-cuisine/mobile",
   "version": "0.0.1",
   "private": true,
   "scripts": {
