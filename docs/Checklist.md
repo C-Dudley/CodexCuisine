@@ -48,9 +48,9 @@
 
 [x] External Recipe API Routes: Create routes to store and retrieve scraped recipes from ExternalRecipe table. (✅ COMPLETE: external-recipes.ts route created)
 
-[ ] Web - Recipe Search & Import: Frontend page to search external recipes and save them to user collection.
+[x] Web - Recipe Search & Import: Frontend page to search external recipes and save them to user collection. (✅ COMPLETE: DiscoverPage.tsx with search, filters, and recipe cards)
 
-[ ] Filter by Preferences: Integrate dietary filter logic into external recipe search results.
+[x] Filter by Preferences: Integrate dietary filter logic into external recipe search results. (✅ COMPLETE: Integrated into external-recipes.ts and DiscoverPage displays safety status)
 
 📹 Phase 7: Video Recipe Extraction
 [ ] YouTube Integration: Set up YouTube API integration to fetch video metadata and transcripts.

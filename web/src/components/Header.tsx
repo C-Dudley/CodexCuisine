@@ -34,6 +34,13 @@ export const Header: React.FC = () => {
               Home
             </Link>
             <Link
+              to="/discover"
+              className="text-gray-700 hover:text-primary-600 transition-colors flex items-center gap-1"
+            >
+              <Search className="h-4 w-4" />
+              Discover
+            </Link>
+            <Link
               to="/meal-plan"
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >

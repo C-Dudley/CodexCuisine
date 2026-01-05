@@ -10,6 +10,7 @@ import { RegisterPage } from "./pages/RegisterPage";
 import MealPlanPage from "./pages/MealPlanPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
 import PreferencesPage from "./pages/PreferencesPage";
+import DiscoverPage from "./pages/DiscoverPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <main className="container mx-auto px-4 py-8">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/discover" element={<DiscoverPage />} />
           <Route path="/recipes/:id" element={<RecipePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/collections" element={<CollectionsPage />} />
