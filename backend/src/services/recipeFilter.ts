@@ -43,8 +43,8 @@ export async function filterRecipesByUserPreferences(
       // Check for allergens in ingredients
       const hasAllergen = (recipe.ingredients || []).some((ingredient: any) => {
         const ingredientName = (ingredient.name || "").toLowerCase();
-        return user.allergies.some(
-          (allergy) => ingredientName.includes(allergy.ingredient.toLowerCase())
+        return user.allergies.some((allergy) =>
+          ingredientName.includes(allergy.ingredient.toLowerCase())
         );
       });
 

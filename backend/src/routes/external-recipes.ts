@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import { isExternalRecipeSafeForUser } from "../services/recipeFilter";
+import { scrapeRecipeFromUrl } from "../services/recipeScraper";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -53,8 +54,15 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     if (params.userId) {
       recipes = await Promise.all(
         recipes.map(async (recipe) => {
-          const safety = await isExternalRecipeSafeForUser(recipe.id, params.userId!);
-          return { ...recipe, safeForUser: safety.safe, allergenWarning: safety.allergenFound };
+          const safety = await isExternalRecipeSafeForUser(
+            recipe.id,
+            params.userId!
+          );
+          return {
+            ...recipe,
+            safeForUser: safety.safe,
+            allergenWarning: safety.allergenFound,
+          };
         })
       );
       // Optionally filter out unsafe recipes: recipes = recipes.filter(r => r.safeForUser);
@@ -96,26 +104,62 @@ router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-// POST - Scrape recipe from URL (placeholder for now)
+// POST - Scrape recipe from URL
 router.post(
   "/scrape",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = scrapeRecipeSchema.parse(req.body);
 
-      // TODO: Implement actual scraping logic
-      // For now, return a placeholder response
+      // Scrape the recipe
+      const { recipe, sourceSite, sourceUrl } = await scrapeRecipeFromUrl(
+        body.url
+      );
 
-      res.status(501).json({
-        error: "Web scraping not yet implemented",
-        message:
-          "This endpoint will scrape recipes from AllRecipes, FoodNetwork, etc.",
-        url: body.url,
+      // Store in database
+      const externalRecipe = await prisma.externalRecipe.create({
+        data: {
+          title: recipe.title,
+          description: recipe.description,
+          instructions: recipe.instructions,
+          cookTime: recipe.cookTime,
+          servings: recipe.servings,
+          imageUrl: recipe.imageUrl,
+          sourceType: "web",
+          sourceUrl: sourceUrl,
+          sourceSite: sourceSite,
+          fullText: recipe.instructions, // Store full recipe text
+          externalIngredients: {
+            create: recipe.ingredients.map((ing) => ({
+              name: ing.name,
+              quantity: ing.quantity,
+              unit: ing.unit,
+            })),
+          },
+        },
+        include: {
+          externalIngredients: true,
+        },
       });
+
+      res.status(201).json(externalRecipe);
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
+
+      // Handle scraping errors
+      if (error instanceof Error) {
+        if (error.message.includes("Unsupported")) {
+          return res.status(400).json({ error: error.message });
+        }
+        if (error.message.includes("Failed to fetch")) {
+          return res
+            .status(400)
+            .json({ error: "Failed to fetch or parse recipe from URL" });
+        }
+      }
+
       next(error);
     }
   }

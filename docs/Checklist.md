@@ -40,11 +40,11 @@
 [x] Search Filter Logic: Implement backend logic to filter recipes based on user preferences and allergies across all sources. (✅ COMPLETE: recipeFilter.ts service + integrated into recipes and external-recipes routes)
 
 🌐 Phase 6: Web Scraping & Recipe Discovery
-[ ] Scraper Service Setup: Create backend service using `cheerio` for parsing HTML from recipe websites.
+[x] Scraper Service Setup: Create backend service using `cheerio` for parsing HTML from recipe websites. (✅ COMPLETE: scraperUtils.ts with JSON-LD parsing)
 
-[ ] AllRecipes Scraper: Build scraper targeting AllRecipes.com recipe pages.
+[x] AllRecipes Scraper: Build scraper targeting AllRecipes.com recipe pages. (✅ COMPLETE: allrecipesScraper.ts)
 
-[ ] Food Network Scraper: Build scraper targeting FoodNetwork.com recipe pages.
+[x] Food Network Scraper: Build scraper targeting FoodNetwork.com recipe pages. (✅ COMPLETE: foodnetworkScraper.ts)
 
 [x] External Recipe API Routes: Create routes to store and retrieve scraped recipes from ExternalRecipe table. (✅ COMPLETE: external-recipes.ts route created)
 

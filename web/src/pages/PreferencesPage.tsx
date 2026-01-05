@@ -27,7 +27,15 @@ const PreferencesPage: React.FC = () => {
   const userId = "mock-user-id-123";
 
   // Common dietary preference options
-  const dietaryOptions = ["vegan", "vegetarian", "keto", "paleo", "gluten-free", "dairy-free", "nut-free"];
+  const dietaryOptions = [
+    "vegan",
+    "vegetarian",
+    "keto",
+    "paleo",
+    "gluten-free",
+    "dairy-free",
+    "nut-free",
+  ];
 
   useEffect(() => {
     fetchPreferences();
@@ -63,15 +71,22 @@ const PreferencesPage: React.FC = () => {
     }
 
     // Check if already added
-    if (preferences.some((p) => p.type.toLowerCase() === newPreference.toLowerCase())) {
+    if (
+      preferences.some(
+        (p) => p.type.toLowerCase() === newPreference.toLowerCase()
+      )
+    ) {
       setError("This preference is already added");
       return;
     }
 
     try {
-      const response = await axios.post(`/api/preferences/${userId}/preferences`, {
-        type: newPreference.toLowerCase(),
-      });
+      const response = await axios.post(
+        `/api/preferences/${userId}/preferences`,
+        {
+          type: newPreference.toLowerCase(),
+        }
+      );
 
       setPreferences([...preferences, response.data]);
       setNewPreference("");
@@ -100,15 +115,22 @@ const PreferencesPage: React.FC = () => {
     }
 
     // Check if already added
-    if (allergies.some((a) => a.ingredient.toLowerCase() === newAllergy.toLowerCase())) {
+    if (
+      allergies.some(
+        (a) => a.ingredient.toLowerCase() === newAllergy.toLowerCase()
+      )
+    ) {
       setError("This allergen is already tracked");
       return;
     }
 
     try {
-      const response = await axios.post(`/api/preferences/${userId}/allergies`, {
-        ingredient: newAllergy.toLowerCase(),
-      });
+      const response = await axios.post(
+        `/api/preferences/${userId}/allergies`,
+        {
+          ingredient: newAllergy.toLowerCase(),
+        }
+      );
 
       setAllergies([...allergies, response.data]);
       setNewAllergy("");
@@ -131,7 +153,9 @@ const PreferencesPage: React.FC = () => {
   };
 
   const toggleQuickPreference = async (pref: string) => {
-    const existing = preferences.find((p) => p.type.toLowerCase() === pref.toLowerCase());
+    const existing = preferences.find(
+      (p) => p.type.toLowerCase() === pref.toLowerCase()
+    );
 
     if (existing) {
       await removePreference(existing.id);
@@ -140,9 +164,12 @@ const PreferencesPage: React.FC = () => {
       // We'll add it using the state instead of calling addPreference
       // to avoid the async delay
       try {
-        const response = await axios.post(`/api/preferences/${userId}/preferences`, {
-          type: pref.toLowerCase(),
-        });
+        const response = await axios.post(
+          `/api/preferences/${userId}/preferences`,
+          {
+            type: pref.toLowerCase(),
+          }
+        );
         setPreferences([...preferences, response.data]);
         setSuccessMessage(`Added ${pref}!`);
         setTimeout(() => setSuccessMessage(null), 3000);
@@ -170,10 +197,13 @@ const PreferencesPage: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Settings className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl font-bold text-gray-900">Food Preferences</h1>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Food Preferences
+            </h1>
           </div>
           <p className="text-gray-600">
-            Set your dietary preferences and allergies to filter recipes that match your needs
+            Set your dietary preferences and allergies to filter recipes that
+            match your needs
           </p>
         </div>
 
@@ -258,7 +288,9 @@ const PreferencesPage: React.FC = () => {
                     key={pref.id}
                     className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg"
                   >
-                    <span className="font-medium text-blue-900 capitalize">{pref.type}</span>
+                    <span className="font-medium text-blue-900 capitalize">
+                      {pref.type}
+                    </span>
                     <button
                       onClick={() => removePreference(pref.id)}
                       className="p-1 text-blue-600 hover:bg-blue-200 rounded transition-colors"
@@ -281,50 +313,62 @@ const PreferencesPage: React.FC = () => {
             <div className="mb-6">
               <p className="text-sm text-gray-600 mb-3">Common allergens:</p>
               <div className="flex flex-wrap gap-2">
-                {["peanuts", "tree nuts", "shellfish", "dairy", "eggs", "soy", "wheat"].map(
-                  (allergen) => {
-                    const isSelected = allergies.some(
-                      (a) => a.ingredient.toLowerCase() === allergen.toLowerCase()
-                    );
-                    return (
-                      <button
-                        key={allergen}
-                        onClick={() => {
-                          if (isSelected) {
-                            const allergyToRemove = allergies.find(
-                              (a) => a.ingredient.toLowerCase() === allergen.toLowerCase()
-                            );
-                            if (allergyToRemove) removeAllergy(allergyToRemove.id);
-                          } else {
-                            setNewAllergy(allergen);
-                            // Add directly
-                            axios
-                              .post(`/api/preferences/${userId}/allergies`, {
-                                ingredient: allergen.toLowerCase(),
-                              })
-                              .then((response) => {
-                                setAllergies([...allergies, response.data]);
-                                setSuccessMessage(`Added ${allergen} to allergies!`);
-                                setTimeout(() => setSuccessMessage(null), 3000);
-                              })
-                              .catch((err) => {
-                                setError(
-                                  err.response?.data?.error || "Failed to add allergen"
-                                );
-                              });
-                          }
-                        }}
-                        className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
-                          isSelected
-                            ? "bg-red-500 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {allergen}
-                      </button>
-                    );
-                  }
-                )}
+                {[
+                  "peanuts",
+                  "tree nuts",
+                  "shellfish",
+                  "dairy",
+                  "eggs",
+                  "soy",
+                  "wheat",
+                ].map((allergen) => {
+                  const isSelected = allergies.some(
+                    (a) => a.ingredient.toLowerCase() === allergen.toLowerCase()
+                  );
+                  return (
+                    <button
+                      key={allergen}
+                      onClick={() => {
+                        if (isSelected) {
+                          const allergyToRemove = allergies.find(
+                            (a) =>
+                              a.ingredient.toLowerCase() ===
+                              allergen.toLowerCase()
+                          );
+                          if (allergyToRemove)
+                            removeAllergy(allergyToRemove.id);
+                        } else {
+                          setNewAllergy(allergen);
+                          // Add directly
+                          axios
+                            .post(`/api/preferences/${userId}/allergies`, {
+                              ingredient: allergen.toLowerCase(),
+                            })
+                            .then((response) => {
+                              setAllergies([...allergies, response.data]);
+                              setSuccessMessage(
+                                `Added ${allergen} to allergies!`
+                              );
+                              setTimeout(() => setSuccessMessage(null), 3000);
+                            })
+                            .catch((err) => {
+                              setError(
+                                err.response?.data?.error ||
+                                  "Failed to add allergen"
+                              );
+                            });
+                        }
+                      }}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all ${
+                        isSelected
+                          ? "bg-red-500 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      {allergen}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -359,7 +403,9 @@ const PreferencesPage: React.FC = () => {
                     key={allergy.id}
                     className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg"
                   >
-                    <span className="font-medium text-red-900 capitalize">{allergy.ingredient}</span>
+                    <span className="font-medium text-red-900 capitalize">
+                      {allergy.ingredient}
+                    </span>
                     <button
                       onClick={() => removeAllergy(allergy.id)}
                       className="p-1 text-red-600 hover:bg-red-200 rounded transition-colors"
@@ -387,16 +433,18 @@ const PreferencesPage: React.FC = () => {
             </div>
           </div>
           <p className="mt-4 text-blue-100 text-sm">
-            Your preferences will be used to filter recipes and meal plans automatically.
+            Your preferences will be used to filter recipes and meal plans
+            automatically.
           </p>
         </div>
 
         {/* Info Box */}
         <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-900">
-            💡 <strong>Tip:</strong> These settings will be applied to filter recipes across all
-            sources (your collection, external recipes, and video recipes) to ensure every recipe
-            suggestion matches your dietary needs and avoids your allergens.
+            💡 <strong>Tip:</strong> These settings will be applied to filter
+            recipes across all sources (your collection, external recipes, and
+            video recipes) to ensure every recipe suggestion matches your
+            dietary needs and avoids your allergens.
           </p>
         </div>
       </div>
