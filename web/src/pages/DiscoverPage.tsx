@@ -29,7 +29,10 @@ const DiscoverPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [addingToMealPlan, setAddingToMealPlan] = useState<string | null>(null);
-  const [mealPlanMessage, setMealPlanMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [mealPlanMessage, setMealPlanMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Mock user ID (in real app, get from auth context)
   const userId = "mock-user-id-123";
@@ -38,29 +41,29 @@ const DiscoverPage: React.FC = () => {
   const addToMealPlan = async (recipeId: string, recipeTitle: string) => {
     try {
       setAddingToMealPlan(recipeId);
-      
+
       // Default to tomorrow's dinner (user can edit in meal plan page)
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       const response = await axios.post("/api/meal-plan", {
         externalRecipeId: recipeId,
-        date: tomorrow.toISOString().split('T')[0],
+        date: tomorrow.toISOString().split("T")[0],
         mealType: "Dinner",
       });
 
       if (response.status === 201) {
         setMealPlanMessage({
-          type: 'success',
-          text: `"${recipeTitle}" added to your meal plan for tomorrow!`
+          type: "success",
+          text: `"${recipeTitle}" added to your meal plan for tomorrow!`,
         });
         setTimeout(() => setMealPlanMessage(null), 3000);
       }
     } catch (err: any) {
       console.error("Add to meal plan error:", err);
       setMealPlanMessage({
-        type: 'error',
-        text: "Failed to add recipe to meal plan. Please try again."
+        type: "error",
+        text: "Failed to add recipe to meal plan. Please try again.",
       });
       setTimeout(() => setMealPlanMessage(null), 3000);
     } finally {
@@ -235,12 +238,14 @@ const DiscoverPage: React.FC = () => {
 
         {/* Meal Plan Message */}
         {mealPlanMessage && (
-          <div className={`mb-6 p-4 border rounded-lg flex gap-2 ${
-            mealPlanMessage.type === 'success' 
-              ? 'bg-green-100 border-green-400 text-green-800' 
-              : 'bg-red-100 border-red-400 text-red-800'
-          }`}>
-            {mealPlanMessage.type === 'success' ? (
+          <div
+            className={`mb-6 p-4 border rounded-lg flex gap-2 ${
+              mealPlanMessage.type === "success"
+                ? "bg-green-100 border-green-400 text-green-800"
+                : "bg-red-100 border-red-400 text-red-800"
+            }`}
+          >
+            {mealPlanMessage.type === "success" ? (
               <span className="text-lg">✓</span>
             ) : (
               <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
@@ -378,7 +383,7 @@ const DiscoverPage: React.FC = () => {
                         >
                           View Source
                         </a>
-                        <button 
+                        <button
                           onClick={() => addToMealPlan(recipe.id, recipe.title)}
                           disabled={addingToMealPlan === recipe.id}
                           className="flex-1 px-3 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1 text-sm font-medium"

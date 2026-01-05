@@ -16,14 +16,16 @@ declare global {
 }
 
 // Validation schemas
-const createMealPlanSchema = z.object({
-  recipeId: z.string().optional(),
-  externalRecipeId: z.string().optional(),
-  date: z.string().transform((str) => new Date(str)),
-  mealType: z.enum(["Breakfast", "Lunch", "Dinner"]),
-}).refine((data) => data.recipeId || data.externalRecipeId, {
-  message: "Either recipeId or externalRecipeId must be provided",
-});
+const createMealPlanSchema = z
+  .object({
+    recipeId: z.string().optional(),
+    externalRecipeId: z.string().optional(),
+    date: z.string().transform((str) => new Date(str)),
+    mealType: z.enum(["Breakfast", "Lunch", "Dinner"]),
+  })
+  .refine((data) => data.recipeId || data.externalRecipeId, {
+    message: "Either recipeId or externalRecipeId must be provided",
+  });
 
 const updateMealPlanSchema = z.object({
   id: z.string(),
@@ -40,11 +42,11 @@ router.get("/", async (req, res, next) => {
 
     const mealPlans = await prisma.mealPlan.findMany({
       where: { userId: req.user.id },
-      include: { 
+      include: {
         recipe: true,
         externalRecipe: {
-          include: { externalIngredients: true }
-        }
+          include: { externalIngredients: true },
+        },
       },
       orderBy: { date: "asc" },
     });
@@ -62,7 +64,8 @@ router.post("/", async (req, res, next) => {
       return res.status(401).json({ success: false, error: "Unauthorized" });
     }
 
-    const { recipeId, externalRecipeId, date, mealType } = createMealPlanSchema.parse(req.body);
+    const { recipeId, externalRecipeId, date, mealType } =
+      createMealPlanSchema.parse(req.body);
 
     const mealPlan = await prisma.mealPlan.create({
       data: {
@@ -72,11 +75,11 @@ router.post("/", async (req, res, next) => {
         date,
         mealType,
       },
-      include: { 
+      include: {
         recipe: true,
         externalRecipe: {
-          include: { externalIngredients: true }
-        }
+          include: { externalIngredients: true },
+        },
       },
     });
 

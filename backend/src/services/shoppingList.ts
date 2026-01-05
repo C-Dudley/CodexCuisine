@@ -45,10 +45,8 @@ export async function generateShoppingList(
 
     // Flatten all ingredient lists
     const allIngredientLists = mealPlans
-      .filter(mealPlan => mealPlan.recipe !== null)
-      .flatMap(
-        (mealPlan) => mealPlan.recipe!.ingredientLists
-      );
+      .filter((mealPlan) => mealPlan.recipe !== null)
+      .flatMap((mealPlan) => mealPlan.recipe!.ingredientLists);
 
     // Group by ingredient ID and unit to handle consolidation
     const groupedIngredients = new Map<

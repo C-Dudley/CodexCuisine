@@ -1,13 +1,14 @@
 # Recipe Discovery
 
 ## Overview
+
 The Recipe Discovery feature allows users to search and browse recipes from external sources (AllRecipes, Food Network). Users can search by keyword, filter by source site, and view detailed recipe information including ingredients, cook time, and servings. The feature integrates with the user's dietary preferences to highlight safe recipes and warn about allergens.
 
 ## Endpoints
+
 - **GET `/api/external-recipes`** — Search external recipes
   - Query Parameters: `query`, `sourceSite`, `limit`, `offset`, `userId` (optional for filtering)
   - Returns: Array of ExternalRecipe objects with `safeForUser` and `allergenWarning` flags
-  
 - **POST `/api/external-recipes/scrape`** — Scrape a recipe from a URL
   - Body: `{ "url": string }`
   - Returns: 201 Created with ExternalRecipe object and externalIngredients array
@@ -15,6 +16,7 @@ The Recipe Discovery feature allows users to search and browse recipes from exte
 ## Logic Flow
 
 **Search & Browse:**
+
 1. User navigates to `/discover` route → DiscoverPage component
 2. User enters search term and optionally selects source site
 3. Frontend calls `GET /api/external-recipes?query=...&sourceSite=...&userId=...`
@@ -29,6 +31,7 @@ The Recipe Discovery feature allows users to search and browse recipes from exte
    - "Add to Plan" quick action button
 
 **Recipe Import:**
+
 1. When `/scrape` endpoint is called with a URL:
 2. Backend routes to appropriate scraper (AllRecipes, FoodNetwork, or unsupported)
 3. Scraper fetches HTML and extracts Recipe JSON-LD schema
@@ -38,12 +41,14 @@ The Recipe Discovery feature allows users to search and browse recipes from exte
 7. Returns 201 with complete recipe object
 
 ## Data Model
+
 - **ExternalRecipe** — Stores scraped recipes with title, description, cook time, servings, imageUrl, sourceUrl, sourceSite, full instructions
 - **ExternalIngredient** — Stores parsed ingredients (name, quantity, unit) linked to ExternalRecipe
 - **DietaryPreference** — User preferences (vegan, vegetarian, keto, etc.) used to flag safe recipes
 - **Allergy** — User allergens used to warn about unsafe ingredients
 
 ## State Management
+
 - **DiscoverPage.tsx** — Local `useState` for:
   - `searchQuery` — Current search text
   - `selectedSource` — Chosen source site filter
@@ -58,6 +63,7 @@ The Recipe Discovery feature allows users to search and browse recipes from exte
 ## Example Usage
 
 **Search External Recipes:**
+
 ```bash
 GET /api/external-recipes?query=carbonara&sourceSite=AllRecipes&userId=mock-user-id-123
 
@@ -86,6 +92,7 @@ Response:
 ```
 
 **Scrape Recipe from URL:**
+
 ```bash
 POST /api/external-recipes/scrape
 Body: { "url": "https://www.allrecipes.com/recipe/12345/carbonara/" }
@@ -109,6 +116,7 @@ Response: 201 Created
 ```
 
 ## Frontend Features
+
 - **Search Bar** — Auto-focus, large text, respects color theme (orange/yellow gradient)
 - **Source Filter** — Dropdown to filter by AllRecipes, Food Network, or all sites
 - **Recipe Cards** — Grid layout (1 column on mobile, 2 on tablet, 3 on desktop)
@@ -122,12 +130,14 @@ Response: 201 Created
 - **Loading State** — Spinner in search button during API call
 
 ## UI Design
+
 - **Color Scheme** — Orange/yellow gradient background, white cards, green for safe recipes, red for allergen warnings
 - **Typography** — Large search box (18px), recipe titles (18px), ingredient text (12px), button text (14px)
 - **Icons** — lucide-react icons for search, filter, plus (add), and alert
 - **Responsive** — Tailwind grid: 1 col mobile, 2 col tablet, 3 col desktop; hidden mobile nav until phase 9
 
 ## Future Enhancement Ideas
+
 - React Query integration for caching search results and invalidation
 - Save external recipes to user collections (TODO: "Add to Plan" button implementation)
 - Batch scrape multiple URLs
