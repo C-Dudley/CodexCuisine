@@ -17,9 +17,12 @@ declare global {
 
 // Validation schemas
 const createMealPlanSchema = z.object({
-  recipeId: z.string(),
+  recipeId: z.string().optional(),
+  externalRecipeId: z.string().optional(),
   date: z.string().transform((str) => new Date(str)),
   mealType: z.enum(["Breakfast", "Lunch", "Dinner"]),
+}).refine((data) => data.recipeId || data.externalRecipeId, {
+  message: "Either recipeId or externalRecipeId must be provided",
 });
 
 const updateMealPlanSchema = z.object({
@@ -37,7 +40,12 @@ router.get("/", async (req, res, next) => {
 
     const mealPlans = await prisma.mealPlan.findMany({
       where: { userId: req.user.id },
-      include: { recipe: true },
+      include: { 
+        recipe: true,
+        externalRecipe: {
+          include: { externalIngredients: true }
+        }
+      },
       orderBy: { date: "asc" },
     });
 
@@ -54,16 +62,22 @@ router.post("/", async (req, res, next) => {
       return res.status(401).json({ success: false, error: "Unauthorized" });
     }
 
-    const { recipeId, date, mealType } = createMealPlanSchema.parse(req.body);
+    const { recipeId, externalRecipeId, date, mealType } = createMealPlanSchema.parse(req.body);
 
     const mealPlan = await prisma.mealPlan.create({
       data: {
         userId: req.user.id,
-        recipeId,
+        ...(recipeId && { recipeId }),
+        ...(externalRecipeId && { externalRecipeId }),
         date,
         mealType,
       },
-      include: { recipe: true },
+      include: { 
+        recipe: true,
+        externalRecipe: {
+          include: { externalIngredients: true }
+        }
+      },
     });
 
     res.status(201).json(mealPlan);

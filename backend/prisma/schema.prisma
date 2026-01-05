@@ -83,8 +83,11 @@ model MealPlan {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  recipeId  String
-  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId  String?  // Optional for external recipes
+  recipe    Recipe?  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  externalRecipeId String?      // Optional for external recipes
+  externalRecipe   ExternalRecipe? @relation(fields: [externalRecipeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -156,6 +159,7 @@ model ExternalRecipe {
 
   // Relations
   externalIngredients ExternalIngredient[]
+  mealPlans           MealPlan[]
 
   @@index([sourceSite])
   @@index([createdAt])

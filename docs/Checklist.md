@@ -52,6 +52,8 @@
 
 [x] Filter by Preferences: Integrate dietary filter logic into external recipe search results. (✅ COMPLETE: Integrated into external-recipes.ts and DiscoverPage displays safety status)
 
+[x] Add External Recipes to Meal Plan: Enable "Add to Plan" button to save external recipes to user's meal plan. (✅ COMPLETE: Updated MealPlan schema with optional externalRecipeId, implemented addToMealPlan() function with default tomorrow date)
+
 📹 Phase 7: Video Recipe Extraction
 [ ] YouTube Integration: Set up YouTube API integration to fetch video metadata and transcripts.
 
