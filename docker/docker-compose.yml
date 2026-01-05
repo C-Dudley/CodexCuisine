@@ -1,0 +1,81 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: recipe-app-postgres
+    environment:
+      POSTGRES_DB: recipe_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - recipe-app-network
+
+  # Backend API
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: recipe-app-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/recipe_app
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      PORT: 3001
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+    networks:
+      - recipe-app-network
+    command: npm run dev
+
+  # Frontend Web App
+  web:
+    build:
+      context: ../web
+      dockerfile: ../docker/Dockerfile.web
+    container_name: recipe-app-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ../web:/app
+      - /app/node_modules
+    networks:
+      - recipe-app-network
+    environment:
+      REACT_APP_API_URL: http://localhost:3001/api
+
+  # Nginx Reverse Proxy (for production)
+  nginx:
+    image: nginx:alpine
+    container_name: recipe-app-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - web
+    networks:
+      - recipe-app-network
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+
+networks:
+  recipe-app-network:
+    driver: bridge

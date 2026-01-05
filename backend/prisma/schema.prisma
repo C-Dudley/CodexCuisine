@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  mealPlans MealPlan[]
+  favorites Favorite[]
+
+  @@map("users")
+}
+
+model Recipe {
+  id           String   @id @default(uuid())
+  title        String
+  instructions String
+  cookTime     Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  ingredientLists IngredientList[]
+  mealPlans       MealPlan[]
+  favorites       Favorite[]
+
+  @@map("recipes")
+}
+
+model Ingredient {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  unit      String?
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  ingredientLists IngredientList[]
+
+  @@map("ingredients")
+}
+
+model IngredientList {
+  id           String  @id @default(uuid())
+  quantity     Float?
+
+  // Relations
+  recipeId     String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([recipeId, ingredientId])
+  @@map("ingredient_lists")
+}
+
+model MealPlan {
+  id        String   @id @default(uuid())
+  date      DateTime
+  mealType  String   // Breakfast, Lunch, Dinner
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("meal_plans")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, recipeId])
+  @@map("favorites")
+}

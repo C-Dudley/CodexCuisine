@@ -1,0 +1,25 @@
+{
+  "name": "recipe-app-monorepo",
+  "version": "1.0.0",
+  "description": "A Yummly-like recipe application with web and mobile support",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "web",
+    "mobile",
+    "shared"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=web\"",
+    "build": "npm run build --workspace=backend && npm run build --workspace=web",
+    "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f docker/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
