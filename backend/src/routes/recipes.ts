@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
+import { filterRecipesByUserPreferences } from "../services/recipeFilter";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -24,12 +25,13 @@ const searchSchema = z.object({
   query: z.string().optional(),
   page: z.number().default(1),
   limit: z.number().default(20),
+  userId: z.string().optional(), // Optional user ID for filtering by preferences
 });
 
 // Get all recipes
 router.get("/", async (req, res, next) => {
   try {
-    const { query, page, limit } = searchSchema.parse(req.query);
+    const { query, page, limit, userId } = searchSchema.parse(req.query);
 
     const skip = (page - 1) * limit;
 
@@ -42,7 +44,7 @@ router.get("/", async (req, res, next) => {
         }
       : {};
 
-    const recipes = await prisma.recipe.findMany({
+    let recipes = await prisma.recipe.findMany({
       where,
       include: {
         ingredientLists: {
@@ -55,6 +57,11 @@ router.get("/", async (req, res, next) => {
       take: limit,
       orderBy: { createdAt: "desc" },
     });
+
+    // Apply dietary filters if userId is provided
+    if (userId) {
+      recipes = await filterRecipesByUserPreferences(recipes, userId);
+    }
 
     const total = await prisma.recipe.count({ where });
 

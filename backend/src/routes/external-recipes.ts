@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
+import { isExternalRecipeSafeForUser } from "../services/recipeFilter";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -15,6 +16,7 @@ const searchExternalRecipesSchema = z.object({
   sourceSite: z.string().optional(),
   limit: z.coerce.number().optional().default(20),
   offset: z.coerce.number().optional().default(0),
+  userId: z.string().optional(), // Optional user ID for filtering by preferences
 });
 
 // GET - Search external recipes
@@ -37,7 +39,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const total = await prisma.externalRecipe.count({ where });
 
-    const recipes = await prisma.externalRecipe.findMany({
+    let recipes = await prisma.externalRecipe.findMany({
       where,
       include: {
         externalIngredients: true,
@@ -46,6 +48,17 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
       skip: params.offset,
       orderBy: { createdAt: "desc" },
     });
+
+    // Filter by user allergies if userId provided
+    if (params.userId) {
+      recipes = await Promise.all(
+        recipes.map(async (recipe) => {
+          const safety = await isExternalRecipeSafeForUser(recipe.id, params.userId!);
+          return { ...recipe, safeForUser: safety.safe, allergenWarning: safety.allergenFound };
+        })
+      );
+      // Optionally filter out unsafe recipes: recipes = recipes.filter(r => r.safeForUser);
+    }
 
     res.json({
       total,

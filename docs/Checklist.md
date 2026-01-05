@@ -37,7 +37,7 @@
 
 [x] Web - Preference Settings: Create a settings page where users can toggle dietary preferences (vegan, vegetarian, keto, etc.) and add allergies. (✅ COMPLETE: PreferencesPage.tsx with quick toggles and custom inputs)
 
-[ ] Search Filter Logic: Implement backend logic to filter recipes based on user preferences and allergies across all sources.
+[x] Search Filter Logic: Implement backend logic to filter recipes based on user preferences and allergies across all sources. (✅ COMPLETE: recipeFilter.ts service + integrated into recipes and external-recipes routes)
 
 🌐 Phase 6: Web Scraping & Recipe Discovery
 [ ] Scraper Service Setup: Create backend service using `cheerio` for parsing HTML from recipe websites.
