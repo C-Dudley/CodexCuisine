@@ -9,6 +9,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import MealPlanPage from "./pages/MealPlanPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
+import PreferencesPage from "./pages/PreferencesPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/collections" element={<CollectionsPage />} />
           <Route path="/meal-plan" element={<MealPlanPage />} />
           <Route path="/shopping-list" element={<ShoppingListPage />} />
+          <Route path="/preferences" element={<PreferencesPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>

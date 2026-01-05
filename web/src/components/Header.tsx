@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, User, Heart, BookOpen, ShoppingCart } from "lucide-react";
+import { Search, User, Heart, BookOpen, ShoppingCart, Settings } from "lucide-react";
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -38,6 +38,13 @@ export const Header: React.FC = () => {
             >
               <ShoppingCart className="h-4 w-4" />
               Shopping
+            </Link>
+            <Link
+              to="/preferences"
+              className="text-gray-700 hover:text-primary-600 transition-colors flex items-center gap-1"
+            >
+              <Settings className="h-4 w-4" />
+              Preferences
             </Link>
             <Link
               to="/collections"

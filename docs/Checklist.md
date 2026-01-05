@@ -35,7 +35,7 @@
 
 [x] API - Preference Routes: GET/POST/DELETE endpoints for managing user dietary preferences and allergies. (✅ COMPLETE: preferences.ts route created)
 
-[ ] Web - Preference Settings: Create a settings page where users can toggle dietary preferences (vegan, vegetarian, keto, etc.) and add allergies.
+[x] Web - Preference Settings: Create a settings page where users can toggle dietary preferences (vegan, vegetarian, keto, etc.) and add allergies. (✅ COMPLETE: PreferencesPage.tsx with quick toggles and custom inputs)
 
 [ ] Search Filter Logic: Implement backend logic to filter recipes based on user preferences and allergies across all sources.
 
