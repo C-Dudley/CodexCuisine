@@ -1,6 +1,6 @@
-# Recipe App 🍳
+# CodexCuisine 🍳
 
-A modern, self-hosted recipe application inspired by Yummly. Built with a monorepo structure supporting both web and mobile platforms.
+CodexCuisine is a modern, self-hosted recipe application inspired by Yummly. Built with a monorepo structure supporting both web and mobile platforms.
 
 ## Features
 
