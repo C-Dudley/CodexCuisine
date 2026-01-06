@@ -6,6 +6,16 @@ import { filterRecipesByUserPreferences } from "../services/recipeFilter";
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// Custom error class
+class RecipeError extends Error {
+  statusCode: number;
+  constructor(message: string, statusCode = 500) {
+    super(message);
+    this.statusCode = statusCode;
+    this.name = "RecipeError";
+  }
+}
+
 // Validation schemas
 const createRecipeSchema = z.object({
   title: z.string().min(1).max(200),
@@ -96,9 +106,7 @@ router.get("/:id", async (req, res, next) => {
     });
 
     if (!recipe) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Recipe not found" });
+      throw new RecipeError("Recipe not found", 404);
     }
 
     res.json(recipe);
@@ -130,30 +138,39 @@ router.post("/", async (req, res, next) => {
 
     // Add ingredients if provided
     if (ingredients && ingredients.length > 0) {
-      await prisma.ingredientList.createMany({
-        data: ingredients.map((ing) => ({
-          recipeId: recipe.id,
-          ingredientId: ing.ingredientId,
-          quantity: ing.quantity,
-        })),
-      });
+      try {
+        await prisma.ingredientList.createMany({
+          data: ingredients.map((ing) => ({
+            recipeId: recipe.id,
+            ingredientId: ing.ingredientId,
+            quantity: ing.quantity,
+          })),
+        });
 
-      // Re-fetch with ingredients
-      const recipeWithIngredients = await prisma.recipe.findUnique({
-        where: { id: recipe.id },
-        include: {
-          ingredientLists: {
-            include: {
-              ingredient: true,
+        // Re-fetch with ingredients
+        const recipeWithIngredients = await prisma.recipe.findUnique({
+          where: { id: recipe.id },
+          include: {
+            ingredientLists: {
+              include: {
+                ingredient: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      return res.status(201).json(recipeWithIngredients);
+        res.status(201).json(recipeWithIngredients);
+      } catch (error: any) {
+        // Clean up recipe if ingredient creation fails
+        await prisma.recipe.delete({ where: { id: recipe.id } });
+        throw new RecipeError(
+          `Failed to add ingredients: ${error.message || "Unknown error"}`,
+          400
+        );
+      }
+    } else {
+      res.status(201).json(recipe);
     }
-
-    res.status(201).json(recipe);
   } catch (error) {
     next(error);
   }
@@ -165,6 +182,16 @@ router.put("/:id", async (req, res, next) => {
     const { id } = req.params;
     const { title, instructions, cookTime, ingredients } =
       createRecipeSchema.parse(req.body);
+
+    // Check if recipe exists
+    const existingRecipe = await prisma.recipe.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existingRecipe) {
+      throw new RecipeError("Recipe not found", 404);
+    }
 
     // Update recipe
     const recipe = await prisma.recipe.update({
@@ -192,13 +219,20 @@ router.put("/:id", async (req, res, next) => {
 
       // Add new ingredients
       if (ingredients.length > 0) {
-        await prisma.ingredientList.createMany({
-          data: ingredients.map((ing) => ({
-            recipeId: id,
-            ingredientId: ing.ingredientId,
-            quantity: ing.quantity,
-          })),
-        });
+        try {
+          await prisma.ingredientList.createMany({
+            data: ingredients.map((ing) => ({
+              recipeId: id,
+              ingredientId: ing.ingredientId,
+              quantity: ing.quantity,
+            })),
+          });
+        } catch (error: any) {
+          throw new RecipeError(
+            `Failed to update ingredients: ${error.message || "Unknown error"}`,
+            400
+          );
+        }
       }
 
       // Re-fetch with ingredients
@@ -213,10 +247,10 @@ router.put("/:id", async (req, res, next) => {
         },
       });
 
-      return res.json(recipeWithIngredients);
+      res.json(recipeWithIngredients);
+    } else {
+      res.json(recipe);
     }
-
-    res.json(recipe);
   } catch (error) {
     next(error);
   }
@@ -227,11 +261,18 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    await prisma.recipe.delete({
-      where: { id },
-    });
-
-    res.status(204).send();
+    try {
+      await prisma.recipe.delete({
+        where: { id },
+      });
+      res.status(204).send();
+    } catch (error: any) {
+      if (error.code === "P2025") {
+        // Prisma "record not found" error
+        throw new RecipeError("Recipe not found", 404);
+      }
+      throw error;
+    }
   } catch (error) {
     next(error);
   }

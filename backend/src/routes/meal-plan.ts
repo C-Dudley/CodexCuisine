@@ -7,6 +7,16 @@ import { requireAuth } from "../middleware/auth";
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// Custom error class
+class MealPlanError extends Error {
+  statusCode: number;
+  constructor(message: string, statusCode = 500) {
+    super(message);
+    this.statusCode = statusCode;
+    this.name = "MealPlanError";
+  }
+}
+
 // Validation schemas
 const createMealPlanSchema = z
   .object({
@@ -26,18 +36,32 @@ const updateMealPlanSchema = z.object({
 });
 
 // Get user's meal plans
-router.get("/", async (req, res, next) => {
+router.get("/", requireAuth, async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
+      throw new MealPlanError("Unauthorized", 401);
     }
 
     const mealPlans = await prisma.mealPlan.findMany({
       where: { userId: req.user.userId },
       include: {
-        recipe: true,
+        recipe: {
+          select: {
+            id: true,
+            title: true,
+            cookTime: true,
+            ingredientLists: {
+              include: { ingredient: true },
+            },
+          },
+        },
         externalRecipe: {
-          include: { externalIngredients: true },
+          select: {
+            id: true,
+            title: true,
+            cookTime: true,
+            externalIngredients: true,
+          },
         },
       },
       orderBy: { date: "asc" },
@@ -50,10 +74,10 @@ router.get("/", async (req, res, next) => {
 });
 
 // Create a meal plan entry
-router.post("/", async (req, res, next) => {
+router.post("/", requireAuth, async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
+      throw new MealPlanError("Unauthorized", 401);
     }
 
     const { recipeId, externalRecipeId, date, mealType } =
@@ -68,24 +92,46 @@ router.post("/", async (req, res, next) => {
         mealType,
       },
       include: {
-        recipe: true,
+        recipe: {
+          select: {
+            id: true,
+            title: true,
+            cookTime: true,
+            ingredientLists: {
+              include: { ingredient: true },
+            },
+          },
+        },
         externalRecipe: {
-          include: { externalIngredients: true },
+          select: {
+            id: true,
+            title: true,
+            cookTime: true,
+            externalIngredients: true,
+          },
         },
       },
     });
 
     res.status(201).json(mealPlan);
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    if (error.code === "P2025") {
+      return next(new MealPlanError("Recipe not found", 404));
+    }
+    next(
+      new MealPlanError(
+        `Failed to create meal plan: ${error.message || "Unknown error"}`,
+        400
+      )
+    );
   }
 });
 
 // Update a meal plan entry
-router.put("/update", async (req, res, next) => {
+router.put("/update", requireAuth, async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
+      throw new MealPlanError("Unauthorized", 401);
     }
 
     const { id, date, mealType } = updateMealPlanSchema.parse(req.body);
@@ -97,9 +143,7 @@ router.put("/update", async (req, res, next) => {
     });
 
     if (!existing) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Meal plan not found" });
+      throw new MealPlanError("Meal plan not found or access denied", 404);
     }
 
     const updated = await prisma.mealPlan.update({
@@ -134,10 +178,10 @@ router.put("/update", async (req, res, next) => {
 });
 
 // Delete a meal plan entry
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", requireAuth, async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
+      throw new MealPlanError("Unauthorized", 401);
     }
 
     const { id } = req.params;
@@ -149,9 +193,7 @@ router.delete("/:id", async (req, res, next) => {
     });
 
     if (!existing) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Meal plan not found" });
+      throw new MealPlanError("Meal plan not found or access denied", 404);
     }
 
     await prisma.mealPlan.delete({
@@ -165,10 +207,10 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 // Generate shopping list from meal plan IDs
-router.post("/shopping-list", async (req, res, next) => {
+router.post("/shopping-list", requireAuth, async (req, res, next) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: "Unauthorized" });
+      throw new MealPlanError("Unauthorized", 401);
     }
 
     const { mealPlanIds } = z
@@ -176,6 +218,10 @@ router.post("/shopping-list", async (req, res, next) => {
         mealPlanIds: z.array(z.string().uuid()),
       })
       .parse(req.body);
+
+    if (!mealPlanIds || mealPlanIds.length === 0) {
+      throw new MealPlanError("No meal plans provided", 400);
+    }
 
     // Ensure all meal plans belong to the user
     const userMealPlans = await prisma.mealPlan.findMany({
@@ -187,9 +233,10 @@ router.post("/shopping-list", async (req, res, next) => {
     });
 
     if (userMealPlans.length !== mealPlanIds.length) {
-      return res
-        .status(403)
-        .json({ success: false, error: "Access denied to some meal plans" });
+      throw new MealPlanError(
+        "Access denied to some meal plans or meal plans not found",
+        403
+      );
     }
 
     const shoppingList = await generateShoppingList(mealPlanIds);
