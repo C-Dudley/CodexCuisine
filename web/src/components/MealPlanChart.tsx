@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -15,6 +15,7 @@ interface MealPlanChartProps {
 
 const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
   const queryClient = useQueryClient();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const updateMealPlanMutation = useMutation({
     mutationFn: async ({
@@ -34,7 +35,16 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
       return response.data;
     },
     onSuccess: () => {
+      setErrorMessage(null);
       queryClient.invalidateQueries({ queryKey: ["meal-plans"] });
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Failed to update meal plan. Please try again.";
+      setErrorMessage(message);
+      console.error("Meal plan update failed:", error);
     },
   });
 
@@ -111,6 +121,17 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
   return (
     <div className="p-4">
       <h2 className="text-2xl md:text-3xl font-bold mb-6">Weekly Meal Plan</h2>
+      {errorMessage && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700 text-sm font-medium">{errorMessage}</p>
+          <button
+            onClick={() => setErrorMessage(null)}
+            className="text-red-600 hover:text-red-800 text-xs mt-2 underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 min-w-full lg:min-w-0">

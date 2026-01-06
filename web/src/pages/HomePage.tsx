@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock, Users, ChefHat, Star, Search, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 // API response types
@@ -38,40 +39,32 @@ interface RecipesResponse {
 }
 
 const HomePage: React.FC = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    fetchRecipes();
-  }, [currentPage, searchQuery]);
-
-  const fetchRecipes = async () => {
-    try {
-      setLoading(true);
+  const { data, isLoading, error, isFetching } = useQuery<RecipesResponse>({
+    queryKey: ["recipes", currentPage, searchQuery],
+    queryFn: async () => {
       const params = new URLSearchParams();
       if (searchQuery) params.append("query", searchQuery);
       params.append("page", currentPage.toString());
       params.append("limit", "12");
-
       const response = await axios.get<RecipesResponse>(
         `/api/recipes?${params}`
       );
-      setRecipes(response.data.recipes);
-    } catch (error) {
-      console.error("Failed to fetch recipes:", error);
-      // For development, show mock data if API fails
-      setRecipes([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+
+  const recipes = data?.recipes || [];
+  const pagination = data?.pagination;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchRecipes();
   };
 
   // Mock data for development when API is not available
@@ -138,8 +131,6 @@ const HomePage: React.FC = () => {
     },
   ];
 
-  const displayRecipes = recipes.length > 0 ? recipes : mockRecipes;
-
   return (
     <div className="min-h-screen bg-gray-50 pt-4">
       {/* Page Header */}
@@ -181,15 +172,25 @@ const HomePage: React.FC = () => {
 
       {/* Recipe Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        {loading ? (
+        {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading recipes...</p>
           </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-600 font-semibold mb-4">Failed to load recipes</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {displayRecipes.map((recipe) => (
+              {recipes.map((recipe) => (
                 <Link
                   key={recipe.id}
                   to={`/recipes/${recipe.id}`}
@@ -223,13 +224,14 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* Load More / Pagination */}
-            {displayRecipes.length >= 12 && (
+            {pagination && currentPage < pagination.pages && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="w-full sm:w-auto bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                  disabled={isFetching}
+                  className="w-full sm:w-auto bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Load More Recipes
+                  {isFetching ? "Loading..." : "Load More Recipes"}
                 </button>
               </div>
             )}
