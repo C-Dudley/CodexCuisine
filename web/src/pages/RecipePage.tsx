@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Clock, Users, ChefHat, ArrowLeft, Plus } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Plus, X } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 // API response types
@@ -29,9 +30,17 @@ interface Recipe {
 
 const RecipePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showMealPlanModal, setShowMealPlanModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
+  const [selectedMealType, setSelectedMealType] = useState<
+    "Breakfast" | "Lunch" | "Dinner"
+  >("Breakfast");
 
   useEffect(() => {
     if (id) {
@@ -125,17 +134,21 @@ const RecipePage: React.FC = () => {
     }
   };
 
-  const addToMealPlan = async (mealType: string) => {
-    if (!recipe) return;
-
-    try {
-      // For now, just show an alert. In a real app, this would open a date picker
-      alert(`Added ${recipe.title} to ${mealType} meal plan!`);
-      // TODO: Implement meal plan addition with date selection
-    } catch (error) {
-      console.error("Failed to add to meal plan:", error);
-    }
-  };
+  const addToMealPlanMutation = useMutation({
+    mutationFn: async () => {
+      if (!recipe) throw new Error("Recipe not found");
+      const response = await axios.post("/api/meal-plan", {
+        recipeId: recipe.id,
+        date: new Date(selectedDate),
+        mealType: selectedMealType,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["meal-plans"] });
+      setShowMealPlanModal(false);
+    },
+  });
 
   if (loading) {
     return (
@@ -226,10 +239,16 @@ const RecipePage: React.FC = () => {
                 {["Breakfast", "Lunch", "Dinner"].map((mealType) => (
                   <button
                     key={mealType}
-                    onClick={() => addToMealPlan(mealType)}
-                    className="flex-1 md:flex-auto bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium whitespace-nowrap"
+                    onClick={() => {
+                      setSelectedMealType(mealType as "Breakfast" | "Lunch" | "Dinner");
+                      setShowMealPlanModal(true);
+                    }}
+                    disabled={addToMealPlanMutation.isPending}
+                    className="flex-1 md:flex-auto bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium whitespace-nowrap"
                   >
-                    Add to {mealType}
+                    {addToMealPlanMutation.isPending
+                      ? "Adding..."
+                      : `Add to ${mealType}`}
                   </button>
                 ))}
               </div>
@@ -292,6 +311,112 @@ const RecipePage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Meal Plan Modal */}
+        {showMealPlanModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Add to Meal Plan
+                </h2>
+                <button
+                  onClick={() => setShowMealPlanModal(false)}
+                  disabled={addToMealPlanMutation.isPending}
+                  className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  addToMealPlanMutation.mutate();
+                }}
+                className="p-6 space-y-4"
+              >
+                {/* Error Message */}
+                {addToMealPlanMutation.error && (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                    {(addToMealPlanMutation.error as any)?.response?.data?.error
+                      ?.message ||
+                      "Failed to add recipe to meal plan. Please try again."}
+                  </div>
+                )}
+
+                {/* Meal Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Meal Type
+                  </label>
+                  <select
+                    value={selectedMealType}
+                    onChange={(e) =>
+                      setSelectedMealType(
+                        e.target.value as "Breakfast" | "Lunch" | "Dinner"
+                      )
+                    }
+                    disabled={addToMealPlanMutation.isPending}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                  </select>
+                </div>
+
+                {/* Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    disabled={addToMealPlanMutation.isPending}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                </div>
+
+                {/* Recipe Info */}
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Recipe:</span> {recipe?.title}
+                  </p>
+                  {recipe?.cookTime && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      <span className="font-medium">Cook Time:</span>{" "}
+                      {recipe.cookTime} minutes
+                    </p>
+                  )}
+                </div>
+
+                {/* Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowMealPlanModal(false)}
+                    disabled={addToMealPlanMutation.isPending}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={addToMealPlanMutation.isPending}
+                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white rounded-lg font-medium disabled:cursor-not-allowed transition-colors"
+                  >
+                    {addToMealPlanMutation.isPending ? "Adding..." : "Add to Plan"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
