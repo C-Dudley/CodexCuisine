@@ -2,18 +2,10 @@ import express from "express";
 import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import { generateShoppingList } from "../services/shoppingList";
+import { requireAuth } from "../middleware/auth";
 
 const prisma = new PrismaClient();
 const router = express.Router();
-
-// Assuming auth middleware sets req.user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: { id: string };
-    }
-  }
-}
 
 // Validation schemas
 const createMealPlanSchema = z
@@ -41,7 +33,7 @@ router.get("/", async (req, res, next) => {
     }
 
     const mealPlans = await prisma.mealPlan.findMany({
-      where: { userId: req.user.id },
+      where: { userId: req.user.userId },
       include: {
         recipe: true,
         externalRecipe: {
@@ -69,7 +61,7 @@ router.post("/", async (req, res, next) => {
 
     const mealPlan = await prisma.mealPlan.create({
       data: {
-        userId: req.user.id,
+        userId: req.user.userId,
         ...(recipeId && { recipeId }),
         ...(externalRecipeId && { externalRecipeId }),
         date,
@@ -100,7 +92,7 @@ router.put("/update", async (req, res, next) => {
 
     // Ensure the meal plan belongs to the user
     const existing = await prisma.mealPlan.findFirst({
-      where: { id, userId: req.user.id },
+      where: { id, userId: req.user.userId },
     });
 
     if (!existing) {
@@ -132,7 +124,7 @@ router.delete("/:id", async (req, res, next) => {
 
     // Ensure the meal plan belongs to the user
     const existing = await prisma.mealPlan.findFirst({
-      where: { id, userId: req.user.id },
+      where: { id, userId: req.user.userId },
     });
 
     if (!existing) {
@@ -168,7 +160,7 @@ router.post("/shopping-list", async (req, res, next) => {
     const userMealPlans = await prisma.mealPlan.findMany({
       where: {
         id: { in: mealPlanIds },
-        userId: req.user.id,
+        userId: req.user.userId,
       },
       select: { id: true },
     });

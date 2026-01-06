@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 import { errorHandler } from "./middleware/errorHandler";
 import { notFound } from "./middleware/errorHandler";
+import { authMiddleware } from "./middleware/auth";
 
 // Routes
 import recipeRoutes from "./routes/recipes";
@@ -39,6 +40,9 @@ app.use(limiter);
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// Authentication middleware (optional - attaches user context if token present)
+app.use(authMiddleware);
 
 // Health check
 app.get("/health", (req, res) => {

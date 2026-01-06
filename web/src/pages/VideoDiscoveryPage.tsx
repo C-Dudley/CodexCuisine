@@ -25,14 +25,17 @@ const VideoDiscoveryPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [scraping, setScraping] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
   const sources = ["YouTube", "TikTok"];
 
   const searchRecipes = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -85,7 +88,8 @@ const VideoDiscoveryPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Scrape error:", err);
-      const errorMsg = err.response?.data?.error || "Failed to extract recipe from video";
+      const errorMsg =
+        err.response?.data?.error || "Failed to extract recipe from video";
       setError(errorMsg);
     } finally {
       setScraping(false);
@@ -114,7 +118,9 @@ const VideoDiscoveryPage: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Video Recipes</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Video Recipes
+          </h1>
           <p className="text-gray-600">
             Extract recipes from YouTube and TikTok videos
           </p>
@@ -122,7 +128,9 @@ const VideoDiscoveryPage: React.FC = () => {
 
         {/* Scraper Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Extract Recipe from Video</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Extract Recipe from Video
+          </h2>
           <form onSubmit={scrapeVideoRecipe}>
             <div className="flex flex-col md:flex-row gap-3">
               <input
@@ -158,11 +166,13 @@ const VideoDiscoveryPage: React.FC = () => {
 
         {/* Message Display */}
         {message && (
-          <div className={`mb-6 p-4 border rounded-lg flex gap-2 ${
-            message.type === "success"
-              ? "bg-green-100 border-green-400 text-green-800"
-              : "bg-red-100 border-red-400 text-red-800"
-          }`}>
+          <div
+            className={`mb-6 p-4 border rounded-lg flex gap-2 ${
+              message.type === "success"
+                ? "bg-green-100 border-green-400 text-green-800"
+                : "bg-red-100 border-red-400 text-red-800"
+            }`}
+          >
             {message.type === "success" ? (
               <span className="text-lg">✓</span>
             ) : (
@@ -182,7 +192,9 @@ const VideoDiscoveryPage: React.FC = () => {
 
         {/* Search/Browse Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Browse Extracted Recipes</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Browse Extracted Recipes
+          </h2>
           <form onSubmit={searchRecipes}>
             <div className="flex gap-3">
               <select
@@ -273,29 +285,42 @@ const VideoDiscoveryPage: React.FC = () => {
                         </h3>
 
                         {/* Author */}
-                        <p className="text-sm text-gray-600 mb-3">By {recipe.authorName}</p>
+                        <p className="text-sm text-gray-600 mb-3">
+                          By {recipe.authorName}
+                        </p>
 
                         {/* Ingredients Count */}
                         <div className="mb-3 text-sm text-gray-700">
-                          <span className="font-semibold">📋 {ingredients.length}</span> ingredients
+                          <span className="font-semibold">
+                            📋 {ingredients.length}
+                          </span>{" "}
+                          ingredients
                         </div>
 
                         {/* Ingredients Preview */}
                         {ingredients.length > 0 && (
                           <div className="mb-4 text-xs text-gray-600 space-y-1">
-                            {ingredients.slice(0, 2).map((ing: string, idx: number) => (
-                              <p key={idx}>• {ing.substring(0, 50)}</p>
-                            ))}
+                            {ingredients
+                              .slice(0, 2)
+                              .map((ing: string, idx: number) => (
+                                <p key={idx}>• {ing.substring(0, 50)}</p>
+                              ))}
                             {ingredients.length > 2 && (
-                              <p className="text-gray-500 italic">+{ingredients.length - 2} more</p>
+                              <p className="text-gray-500 italic">
+                                +{ingredients.length - 2} more
+                              </p>
                             )}
                           </div>
                         )}
 
                         {/* Recipe Meta */}
                         <div className="flex gap-3 text-sm text-gray-600 mb-4">
-                          {recipe.cookTime && <span>⏱️ {recipe.cookTime} min</span>}
-                          {recipe.servings && <span>🍽️ {recipe.servings} servings</span>}
+                          {recipe.cookTime && (
+                            <span>⏱️ {recipe.cookTime} min</span>
+                          )}
+                          {recipe.servings && (
+                            <span>🍽️ {recipe.servings} servings</span>
+                          )}
                         </div>
 
                         {/* Action Buttons */}
@@ -326,7 +351,9 @@ const VideoDiscoveryPage: React.FC = () => {
         {!hasSearched && (
           <div className="text-center py-16">
             <Play className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-xl text-gray-600 mb-2">Discover recipes from videos</p>
+            <p className="text-xl text-gray-600 mb-2">
+              Discover recipes from videos
+            </p>
             <p className="text-gray-500">
               Paste a YouTube or TikTok video URL above to extract the recipe
             </p>

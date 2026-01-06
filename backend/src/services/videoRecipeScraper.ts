@@ -1,11 +1,5 @@
-import {
-  extractYouTubeRecipe,
-  isYouTubeUrl,
-} from "./youtubeExtractor";
-import {
-  extractTikTokRecipe,
-  isTikTokUrl,
-} from "./tiktokExtractor";
+import { extractYouTubeRecipe, isYouTubeUrl } from "./youtubeExtractor";
+import { extractTikTokRecipe, isTikTokUrl } from "./tiktokExtractor";
 
 export interface ScrapedVideoRecipe {
   title: string;

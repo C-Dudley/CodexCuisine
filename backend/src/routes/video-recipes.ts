@@ -94,7 +94,10 @@ router.post(
         data: {
           title: scrapedRecipe.title,
           description: scrapedRecipe.description,
-          platform: scrapedRecipe.sourceType.toLowerCase() as "youtube" | "tiktok" | "instagram",
+          platform: scrapedRecipe.sourceType.toLowerCase() as
+            | "youtube"
+            | "tiktok"
+            | "instagram",
           sourceType: scrapedRecipe.sourceType,
           videoId: scrapedRecipe.videoId,
           sourceUrl: scrapedRecipe.sourceUrl,
