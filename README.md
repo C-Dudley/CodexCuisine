@@ -136,9 +136,10 @@ sequenceDiagram
 ## 📚 Documentation & Resources
 
 **Quick Links for Getting Started:**
+
 - 🚀 [Setup Guide](./SETUP.md) - Local development setup and troubleshooting
 - 🔌 [API Documentation](./API_DOCUMENTATION.md) - Complete API endpoint reference
-- 🤝 [Contributing Guide](./CONTRIBUTING.md) - Code style and contribution workflow  
+- 🤝 [Contributing Guide](./CONTRIBUTING.md) - Code style and contribution workflow
 - 🏗️ [Architecture](./docs/ArchitectureDiagram.md) - System design diagrams
 - 📊 [Database Schema](./docs/EntityRelationshipDiagram.md) - Entity relationships
 

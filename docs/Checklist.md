@@ -97,7 +97,7 @@
 
 [x] Form Validations: Modal with date picker, loading states, inline error display. (✅ COMPLETE: RecipePage meal plan modal with date picker and validation)
 
-[x] Accessibility: WCAG 2.1 compliance with ARIA labels, focus states, keyboard navigation. (✅ COMPLETE: All components updated with focus:ring-2, aria-*, role attributes, Escape/Enter support)
+[x] Accessibility: WCAG 2.1 compliance with ARIA labels, focus states, keyboard navigation. (✅ COMPLETE: All components updated with focus:ring-2, aria-\*, role attributes, Escape/Enter support)
 
 [x] Documentation: Comprehensive guides (SETUP.md, API_DOCUMENTATION.md, CONTRIBUTING.md, 1900+ lines). (✅ COMPLETE: Developer onboarding, API reference, contribution guidelines, troubleshooting)
 

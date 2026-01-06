@@ -53,7 +53,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     // Filter by user allergies if userId provided
     if (params.userId) {
       recipes = await Promise.all(
-        recipes.map(async (recipe) => {
+        recipes.map(async (recipe: any): Promise<any> => {
           const safety = await isExternalRecipeSafeForUser(
             recipe.id,
             params.userId!

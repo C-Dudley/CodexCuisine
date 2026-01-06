@@ -37,14 +37,11 @@ export const errorHandler = (
     message = err.message || "Internal Server Error";
   }
 
-  console.error(
-    `[${new Date().toISOString()}] ${statusCode} - ${message}`,
-    {
-      path: req.path,
-      method: req.method,
-      ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
-    }
-  );
+  console.error(`[${new Date().toISOString()}] ${statusCode} - ${message}`, {
+    path: req.path,
+    method: req.method,
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+  });
 
   res.status(statusCode).json({
     success: false,

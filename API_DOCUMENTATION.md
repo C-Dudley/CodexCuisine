@@ -15,14 +15,18 @@ Authorization: Bearer <your-jwt-token>
 ## Response Format
 
 Success response (2xx):
+
 ```json
 {
   "success": true,
-  "data": { /* response data */ }
+  "data": {
+    /* response data */
+  }
 }
 ```
 
 Error response (4xx, 5xx):
+
 ```json
 {
   "success": false,
@@ -61,11 +65,13 @@ Check if API is running.
 Get paginated list of recipes with optional search.
 
 **Query Parameters**:
+
 - `query` (string, optional): Search by title or instructions
 - `page` (number, optional): Page number (default: 1)
 - `limit` (number, optional): Results per page (default: 12)
 
 **Response**:
+
 ```json
 {
   "recipes": [
@@ -114,6 +120,7 @@ Get full details of a specific recipe.
 Create a new recipe. **Requires authentication**.
 
 **Request Body**:
+
 ```json
 {
   "title": "New Recipe",
@@ -130,12 +137,14 @@ Create a new recipe. **Requires authentication**.
 ```
 
 **Validation**:
+
 - `title`: Required, string, 3-255 characters
 - `instructions`: Optional, string
 - `cookTime`: Optional, positive number (minutes)
 - `ingredientLists`: Array of ingredients
 
 **Status Codes**:
+
 - `201`: Recipe created successfully
 - `400`: Validation error
 - `401`: Not authenticated
@@ -150,6 +159,7 @@ Update an existing recipe. **Requires authentication**.
 **Request Body**: Same as Create Recipe
 
 **Status Codes**:
+
 - `200`: Recipe updated
 - `400`: Validation error
 - `401`: Not authenticated
@@ -162,6 +172,7 @@ Update an existing recipe. **Requires authentication**.
 Delete a recipe. **Requires authentication**.
 
 **Status Codes**:
+
 - `204`: Recipe deleted
 - `401`: Not authenticated
 - `404`: Recipe not found
@@ -177,6 +188,7 @@ Delete a recipe. **Requires authentication**.
 Get all meal plans for the authenticated user.
 
 **Response**:
+
 ```json
 [
   {
@@ -203,6 +215,7 @@ Get all meal plans for the authenticated user.
 Add a recipe to user's meal plan. **Requires authentication**.
 
 **Request Body**:
+
 ```json
 {
   "recipeId": "uuid",
@@ -212,11 +225,13 @@ Add a recipe to user's meal plan. **Requires authentication**.
 ```
 
 **Validation**:
+
 - `recipeId` OR `externalRecipeId`: At least one required
 - `date`: Required, valid ISO date
 - `mealType`: Required, must be "Breakfast", "Lunch", or "Dinner"
 
 **Status Codes**:
+
 - `201`: Meal plan created
 - `400`: Validation error or missing recipe
 - `401`: Not authenticated
@@ -229,6 +244,7 @@ Add a recipe to user's meal plan. **Requires authentication**.
 Update a meal plan entry's date or meal type. **Requires authentication**.
 
 **Request Body**:
+
 ```json
 {
   "id": "uuid",
@@ -238,6 +254,7 @@ Update a meal plan entry's date or meal type. **Requires authentication**.
 ```
 
 **Status Codes**:
+
 - `200`: Meal plan updated
 - `400`: Validation error
 - `401`: Not authenticated
@@ -250,6 +267,7 @@ Update a meal plan entry's date or meal type. **Requires authentication**.
 Remove a meal from the user's plan. **Requires authentication**.
 
 **Status Codes**:
+
 - `204`: Meal plan deleted
 - `401`: Not authenticated
 - `404`: Meal plan not found
@@ -261,6 +279,7 @@ Remove a meal from the user's plan. **Requires authentication**.
 Generate aggregated shopping list from meal plan IDs. **Requires authentication**.
 
 **Request Body**:
+
 ```json
 {
   "mealPlanIds": ["uuid1", "uuid2", "uuid3"]
@@ -268,6 +287,7 @@ Generate aggregated shopping list from meal plan IDs. **Requires authentication*
 ```
 
 **Response**:
+
 ```json
 {
   "items": [
@@ -282,6 +302,7 @@ Generate aggregated shopping list from meal plan IDs. **Requires authentication*
 ```
 
 **Status Codes**:
+
 - `200`: Shopping list generated
 - `400`: No meal plans provided
 - `401`: Not authenticated
@@ -299,16 +320,16 @@ Generate aggregated shopping list from meal plan IDs. **Requires authentication*
 
 ### Common Status Codes
 
-| Code | Meaning | Example |
-|------|---------|---------|
-| `200` | Success | Recipe retrieved |
-| `201` | Created | Recipe created |
-| `204` | No Content | Deletion successful |
-| `400` | Bad Request | Invalid input |
-| `401` | Unauthorized | Missing/invalid JWT |
-| `403` | Forbidden | Access denied |
-| `404` | Not Found | Recipe doesn't exist |
-| `500` | Server Error | Unexpected error |
+| Code  | Meaning      | Example              |
+| ----- | ------------ | -------------------- |
+| `200` | Success      | Recipe retrieved     |
+| `201` | Created      | Recipe created       |
+| `204` | No Content   | Deletion successful  |
+| `400` | Bad Request  | Invalid input        |
+| `401` | Unauthorized | Missing/invalid JWT  |
+| `403` | Forbidden    | Access denied        |
+| `404` | Not Found    | Recipe doesn't exist |
+| `500` | Server Error | Unexpected error     |
 
 ### Validation Error Format
 
@@ -364,6 +385,7 @@ GET /api/recipes?query=pasta&page=1&limit=12
 ```
 
 Searches in:
+
 - Recipe title
 - Instructions
 
@@ -372,6 +394,7 @@ Searches in:
 ## Data Types
 
 ### Recipe
+
 ```typescript
 {
   id: string (UUID)
@@ -385,6 +408,7 @@ Searches in:
 ```
 
 ### IngredientList
+
 ```typescript
 {
   id: string (UUID)
@@ -395,6 +419,7 @@ Searches in:
 ```
 
 ### Ingredient
+
 ```typescript
 {
   id: string (UUID)
@@ -405,6 +430,7 @@ Searches in:
 ```
 
 ### MealPlan
+
 ```typescript
 {
   id: string (UUID)
@@ -460,4 +486,3 @@ curl http://localhost:3001/api/meal-plan \
 - [ ] Image uploads for recipes
 - [ ] Pagination cursors for large datasets
 - [ ] Advanced filtering and sorting
-

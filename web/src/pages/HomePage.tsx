@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock, Users, ChefHat, Star, Search, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "../lib/axiosConfig";
 
 // API response types
 interface Ingredient {
@@ -49,7 +49,7 @@ const HomePage: React.FC = () => {
       if (searchQuery) params.append("query", searchQuery);
       params.append("page", currentPage.toString());
       params.append("limit", "12");
-      const response = await axios.get<RecipesResponse>(
+      const response = await axiosInstance.get<RecipesResponse>(
         `/api/recipes?${params}`
       );
       return response.data;
@@ -150,7 +150,10 @@ const HomePage: React.FC = () => {
 
       {/* Search */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <form
+          onSubmit={handleSearch}
+          className="flex flex-col sm:flex-row gap-2 sm:gap-4"
+        >
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
@@ -179,7 +182,9 @@ const HomePage: React.FC = () => {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <p className="text-red-600 font-semibold mb-4">Failed to load recipes</p>
+            <p className="text-red-600 font-semibold mb-4">
+              Failed to load recipes
+            </p>
             <button
               onClick={() => window.location.reload()}
               className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"

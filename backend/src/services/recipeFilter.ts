@@ -43,7 +43,7 @@ export async function filterRecipesByUserPreferences(
       // Check for allergens in ingredients
       const hasAllergen = (recipe.ingredients || []).some((ingredient: any) => {
         const ingredientName = (ingredient.name || "").toLowerCase();
-        return user.allergies.some((allergy) =>
+        return user.allergies.some((allergy: any) =>
           ingredientName.includes(allergy.ingredient.toLowerCase())
         );
       });
@@ -166,8 +166,8 @@ export async function getUserDietaryInfo(userId: string) {
     });
 
     return {
-      preferences: preferences.map((p) => p.type),
-      allergies: allergies.map((a) => a.ingredient),
+      preferences: preferences.map((p: any) => p.type),
+      allergies: allergies.map((a: any) => a.ingredient),
     };
   } catch (error) {
     console.error("Error fetching dietary info:", error);

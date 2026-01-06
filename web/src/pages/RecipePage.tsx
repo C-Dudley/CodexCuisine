@@ -169,7 +169,9 @@ const RecipePage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Recipe Not Found
           </h1>
-          <p className="text-gray-600 mb-6">{error || "The recipe you're looking for doesn't exist."}</p>
+          <p className="text-gray-600 mb-6">
+            {error || "The recipe you're looking for doesn't exist."}
+          </p>
           <Link
             to="/"
             className="inline-flex items-center bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium"
@@ -240,7 +242,9 @@ const RecipePage: React.FC = () => {
                   <button
                     key={mealType}
                     onClick={() => {
-                      setSelectedMealType(mealType as "Breakfast" | "Lunch" | "Dinner");
+                      setSelectedMealType(
+                        mealType as "Breakfast" | "Lunch" | "Dinner"
+                      );
                       setShowMealPlanModal(true);
                     }}
                     disabled={addToMealPlanMutation.isPending}
@@ -277,7 +281,9 @@ const RecipePage: React.FC = () => {
                         {item.quantity
                           ? `${item.quantity} ${item.ingredient.unit || ""} `
                           : ""}
-                        <span className="font-medium">{item.ingredient.name}</span>
+                        <span className="font-medium">
+                          {item.ingredient.name}
+                        </span>
                       </span>
                     </label>
                   ))}
@@ -333,7 +339,10 @@ const RecipePage: React.FC = () => {
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
+                <h2
+                  id="modal-title"
+                  className="text-xl font-semibold text-gray-900"
+                >
                   Add to Meal Plan
                 </h2>
                 <button
@@ -437,7 +446,9 @@ const RecipePage: React.FC = () => {
                     disabled={addToMealPlanMutation.isPending}
                     className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-400 text-white rounded-lg font-medium disabled:cursor-not-allowed transition-colors"
                   >
-                    {addToMealPlanMutation.isPending ? "Adding..." : "Add to Plan"}
+                    {addToMealPlanMutation.isPending
+                      ? "Adding..."
+                      : "Add to Plan"}
                   </button>
                 </div>
               </form>

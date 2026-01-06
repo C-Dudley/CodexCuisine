@@ -90,6 +90,7 @@ npm run dev
 ```
 
 This will start:
+
 - **Backend API**: http://localhost:3001
 - **Frontend**: http://localhost:3000
 
@@ -140,20 +141,20 @@ npm start
 
 ### Backend (backend/.env)
 
-| Variable | Description | Example | Required |
-|----------|-------------|---------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/codexcuisine` | ✓ |
-| `JWT_SECRET` | Secret key for JWT signing | 32+ character random string | ✓ |
-| `NODE_ENV` | Environment mode | `development`, `production` | ✓ |
-| `PORT` | Server port | `3001` | - |
-| `CORS_ORIGIN` | Allowed CORS origins | `http://localhost:3000` | - |
+| Variable       | Description                  | Example                                              | Required |
+| -------------- | ---------------------------- | ---------------------------------------------------- | -------- |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/codexcuisine` | ✓        |
+| `JWT_SECRET`   | Secret key for JWT signing   | 32+ character random string                          | ✓        |
+| `NODE_ENV`     | Environment mode             | `development`, `production`                          | ✓        |
+| `PORT`         | Server port                  | `3001`                                               | -        |
+| `CORS_ORIGIN`  | Allowed CORS origins         | `http://localhost:3000`                              | -        |
 
 ### Frontend (web/.env)
 
-| Variable | Description | Example | Required |
-|----------|-------------|---------|----------|
-| `REACT_APP_API_URL` | Backend API URL | `http://localhost:3001` | ✓ |
-| `NODE_ENV` | Environment mode | `development` | - |
+| Variable            | Description      | Example                 | Required |
+| ------------------- | ---------------- | ----------------------- | -------- |
+| `REACT_APP_API_URL` | Backend API URL  | `http://localhost:3001` | ✓        |
+| `NODE_ENV`          | Environment mode | `development`           | -        |
 
 ## Common Commands
 
@@ -315,4 +316,3 @@ git push origin feature/your-feature-name
 - Use HTTPS in production
 - Validate all user inputs server-side
 - Keep dependencies updated: `npm audit fix`
-

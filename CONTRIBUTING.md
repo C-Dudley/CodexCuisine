@@ -25,6 +25,7 @@ git checkout -b feature/your-feature-name
 ```
 
 Branch naming conventions:
+
 - `feature/` - New feature
 - `fix/` - Bug fix
 - `docs/` - Documentation
@@ -36,6 +37,7 @@ Branch naming conventions:
 Follow the project's code style and patterns:
 
 **Backend (TypeScript/Express)**:
+
 - Use async/await for asynchronous operations
 - Validate inputs with Zod schemas
 - Handle errors with custom error classes
@@ -43,6 +45,7 @@ Follow the project's code style and patterns:
 - Write JSDoc comments for complex functions
 
 **Frontend (React/TypeScript)**:
+
 - Use functional components with hooks
 - Use React Query for data fetching
 - Tailwind CSS for styling
@@ -85,7 +88,7 @@ const getUserMealPlans = async (userId: string): Promise<Meal[]> => {
   try {
     const plans = await prisma.mealPlan.findMany({
       where: { userId },
-      include: { recipe: true }
+      include: { recipe: true },
     });
     return plans;
   } catch (error) {
@@ -110,7 +113,7 @@ interface RecipeCardProps {
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onSelect }) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  
+
   const handleClick = async () => {
     setIsLoading(true);
     try {
@@ -174,6 +177,7 @@ cd web && npm run test
 ## Documentation
 
 ### Update Documentation When:
+
 - Adding new API endpoints
 - Changing API response formats
 - Adding new environment variables
@@ -183,12 +187,14 @@ cd web && npm run test
 ## Performance Considerations
 
 ### Backend
+
 - Use database indexes for common queries ✓ (Already implemented)
 - Avoid N+1 queries with proper includes
 - Use select to fetch only needed fields
 - Cache frequently accessed data
 
 ### Frontend
+
 - Use React Query for data caching
 - Implement lazy loading for images
 - Code split components with React.lazy
@@ -307,4 +313,3 @@ Releases follow semantic versioning (MAJOR.MINOR.PATCH):
 - Review [docs/](./docs/) folder
 
 Thank you for contributing! 🎉
-

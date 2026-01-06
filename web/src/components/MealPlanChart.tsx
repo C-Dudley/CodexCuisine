@@ -142,7 +142,9 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
                 <div
                   key={dayKey}
                   className={`border rounded-lg p-3 ${
-                    isToday ? "bg-purple-100 border-purple-300" : "bg-white border-gray-200"
+                    isToday
+                      ? "bg-purple-100 border-purple-300"
+                      : "bg-white border-gray-200"
                   }`}
                 >
                   <h3 className="font-semibold text-center mb-3 text-sm md:text-base">
@@ -178,7 +180,9 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className={`bg-white border rounded p-2 mb-1 shadow-sm text-xs transition-all ${
-                                    snapshot.isDragging ? "shadow-lg ring-2 ring-purple-500" : ""
+                                    snapshot.isDragging
+                                      ? "shadow-lg ring-2 ring-purple-500"
+                                      : ""
                                   }`}
                                 >
                                   {plan.recipe && (
@@ -203,7 +207,8 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
                     </Droppable>
                   ))}
                   <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-100 rounded font-medium">
-                    Total: {getTotalTime(Object.values(groupedData[dayKey]).flat())}m
+                    Total:{" "}
+                    {getTotalTime(Object.values(groupedData[dayKey]).flat())}m
                   </div>
                 </div>
               );

@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@codex-cuisine/shared": "^1.0.0",
     "@headlessui/react": "^1.7.17",
     "@hello-pangea/dnd": "^18.0.1",
     "@heroicons/react": "^2.0.18",
     "@tanstack/react-query": "^5.14.0",
     "@types/node": "^16.18.68",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
     "lucide-react": "^0.294.0",
@@ -17,14 +16,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",
-    "react-query": "^3.39.3",
     "react-router-dom": "^6.20.1",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.3.6",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
-    "zod": "^3.22.4",
-    "@codex-cuisine/shared": "^1.0.0"
+    "zod": "^3.22.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,6 +49,8 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6"
