@@ -23,6 +23,8 @@ model User {
   dietaryPreferences DietaryPreference[]
   allergies          Allergy[]
 
+  @@index([email])
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -39,6 +41,8 @@ model Recipe {
   mealPlans       MealPlan[]
   favorites       Favorite[]
 
+  @@index([title])
+  @@index([createdAt])
   @@map("recipes")
 }
 
@@ -71,6 +75,8 @@ model IngredientList {
   updatedAt    DateTime   @updatedAt
 
   @@unique([recipeId, ingredientId])
+  @@index([recipeId])
+  @@index([ingredientId])
   @@map("ingredient_lists")
 }
 
@@ -92,6 +98,10 @@ model MealPlan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([userId])
+  @@index([recipeId])
+  @@index([date])
+  @@index([userId, date])
   @@map("meal_plans")
 }
 
@@ -109,6 +119,8 @@ model Favorite {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, recipeId])
+  @@index([userId])
+  @@index([recipeId])
   @@map("favorites")
 }
 
@@ -124,6 +136,7 @@ model DietaryPreference {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, type])
+  @@index([userId])
   @@map("dietary_preferences")
 }
 
@@ -139,6 +152,7 @@ model Allergy {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, ingredient])
+  @@index([userId])
   @@map("allergies")
 }
 
@@ -162,6 +176,7 @@ model ExternalRecipe {
   mealPlans           MealPlan[]
 
   @@index([sourceSite])
+  @@index([sourceUrl])
   @@index([createdAt])
   @@map("external_recipes")
 }
@@ -179,6 +194,7 @@ model ExternalIngredient {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@index([recipeId])
   @@map("external_ingredients")
 }
 
@@ -204,5 +220,7 @@ model VideoRecipe {
 
   @@index([platform])
   @@index([videoId])
+  @@index([authorName])
+  @@index([createdAt])
   @@map("video_recipes")
 }

@@ -150,16 +150,18 @@ const RecipePage: React.FC = () => {
 
   if (error || !recipe) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <ChefHat className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Recipe Not Found
           </h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <p className="text-gray-600 mb-6">{error || "The recipe you're looking for doesn't exist."}</p>
           <Link
             to="/"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium"
           >
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Recipes
           </Link>
         </div>
@@ -170,62 +172,62 @@ const RecipePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link
             to="/"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="inline-flex items-center text-gray-600 hover:text-purple-600 transition-colors font-medium text-sm"
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Recipes
           </Link>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Recipe Header */}
           <div className="relative">
-            <div className="aspect-w-16 aspect-h-9 bg-gray-200 flex items-center justify-center">
-              <ChefHat className="h-24 w-24 text-gray-400" />
+            <div className="w-full h-48 sm:h-64 md:h-80 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+              <ChefHat className="h-20 w-20 sm:h-24 sm:w-24 text-purple-300" />
             </div>
-            <div className="absolute top-4 right-4">
-              <button className="bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-shadow">
-                <Plus className="h-5 w-5 text-gray-600" />
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+              <button className="bg-white p-2 sm:p-3 rounded-full shadow-md hover:shadow-lg transition-shadow hover:bg-purple-50">
+                <Plus className="h-5 w-5 text-purple-600" />
               </button>
             </div>
           </div>
 
-          <div className="p-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <div className="p-4 sm:p-6 md:p-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               {recipe.title}
             </h1>
 
             {/* Recipe Meta */}
-            <div className="flex items-center gap-6 mb-6 text-gray-600">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 text-gray-600 text-sm md:text-base">
               {recipe.cookTime && (
                 <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
-                  <span>{recipe.cookTime} minutes</span>
+                  <Clock className="h-5 w-5 text-purple-600" />
+                  <span>{recipe.cookTime} mins</span>
                 </div>
               )}
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
+                <Users className="h-5 w-5 text-purple-600" />
                 <span>{recipe.ingredientLists.length} ingredients</span>
               </div>
             </div>
 
             {/* Add to Meal Plan Buttons */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="mb-6 md:mb-8 p-4 bg-purple-50 rounded-lg">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3">
                 Add to Meal Plan
               </h3>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 {["Breakfast", "Lunch", "Dinner"].map((mealType) => (
                   <button
                     key={mealType}
                     onClick={() => addToMealPlan(mealType)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="flex-1 md:flex-auto bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium whitespace-nowrap"
                   >
                     Add to {mealType}
                   </button>
@@ -233,44 +235,58 @@ const RecipePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {/* Ingredients */}
-              <div className="lg:col-span-1">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Ingredients
+              <div className="md:col-span-1">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <span>Ingredients</span>
+                  <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                    {recipe.ingredientLists.length}
+                  </span>
                 </h2>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {recipe.ingredientLists.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3">
+                    <label
+                      key={item.id}
+                      className="flex items-start gap-3 p-2 rounded hover:bg-gray-50 cursor-pointer"
+                    >
                       <input
                         type="checkbox"
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="h-4 w-4 mt-0.5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded flex-shrink-0"
                       />
-                      <span className="text-gray-700">
+                      <span className="text-gray-700 text-sm md:text-base">
                         {item.quantity
-                          ? `${item.quantity} ${item.ingredient.unit || ""}`
-                          : item.ingredient.unit || ""}{" "}
-                        {item.ingredient.name}
+                          ? `${item.quantity} ${item.ingredient.unit || ""} `
+                          : ""}
+                        <span className="font-medium">{item.ingredient.name}</span>
                       </span>
-                    </div>
+                    </label>
                   ))}
                 </div>
               </div>
 
               {/* Instructions */}
-              <div className="lg:col-span-2">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="md:col-span-2">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-4">
                   Instructions
                 </h2>
-                <div className="prose prose-gray max-w-none">
-                  {recipe.instructions.split("\n").map((step, index) => (
-                    <p
-                      key={index}
-                      className="mb-4 text-gray-700 leading-relaxed"
-                    >
-                      {step.trim()}
-                    </p>
-                  ))}
+                <div className="space-y-4">
+                  {recipe.instructions.split("\n").map((step, index) => {
+                    const trimmedStep = step.trim();
+                    if (!trimmedStep) return null;
+                    return (
+                      <div key={index} className="flex gap-4">
+                        <div className="flex-shrink-0">
+                          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-purple-100 text-purple-600 font-medium text-sm">
+                            {index + 1}
+                          </div>
+                        </div>
+                        <p className="text-gray-700 text-sm md:text-base leading-relaxed pt-1">
+                          {trimmedStep}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

@@ -141,40 +141,38 @@ const HomePage: React.FC = () => {
   const displayRecipes = recipes.length > 0 ? recipes : mockRecipes;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">
-              CodexCuisine — Discover Recipes
-            </h1>
-            <Link
-              to="/meal-plan"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              My Meal Plan
-            </Link>
-          </div>
+    <div className="min-h-screen bg-gray-50 pt-4">
+      {/* Page Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            Discover Recipes
+          </h1>
+          <Link
+            to="/meal-plan"
+            className="w-full sm:w-auto bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-center font-medium"
+          >
+            My Meal Plan
+          </Link>
         </div>
       </div>
 
       {/* Search */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <form onSubmit={handleSearch} className="flex gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 sm:gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search CodexCuisine..."
+              placeholder="Search recipes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm md:text-base"
             />
           </div>
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium"
           >
             Search
           </button>
@@ -190,7 +188,7 @@ const HomePage: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {displayRecipes.map((recipe) => (
                 <Link
                   key={recipe.id}
@@ -229,7 +227,7 @@ const HomePage: React.FC = () => {
               <div className="text-center mt-8">
                 <button
                   onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="w-full sm:w-auto bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
                 >
                   Load More Recipes
                 </button>

@@ -90,9 +90,10 @@ router.put("/update", async (req, res, next) => {
 
     const { id, date, mealType } = updateMealPlanSchema.parse(req.body);
 
-    // Ensure the meal plan belongs to the user
+    // Ensure the meal plan belongs to the user (lightweight check)
     const existing = await prisma.mealPlan.findFirst({
       where: { id, userId: req.user.userId },
+      select: { id: true },
     });
 
     if (!existing) {
@@ -104,7 +105,26 @@ router.put("/update", async (req, res, next) => {
     const updated = await prisma.mealPlan.update({
       where: { id },
       data: { date, mealType },
-      include: { recipe: true },
+      include: {
+        recipe: {
+          select: {
+            id: true,
+            title: true,
+            cookTime: true,
+            ingredientLists: {
+              include: { ingredient: true },
+            },
+          },
+        },
+        externalRecipe: {
+          select: {
+            id: true,
+            title: true,
+            cookTime: true,
+            externalIngredients: true,
+          },
+        },
+      },
     });
 
     res.json(updated);
@@ -122,9 +142,10 @@ router.delete("/:id", async (req, res, next) => {
 
     const { id } = req.params;
 
-    // Ensure the meal plan belongs to the user
+    // Ensure the meal plan belongs to the user (lightweight check)
     const existing = await prisma.mealPlan.findFirst({
       where: { id, userId: req.user.userId },
+      select: { id: true },
     });
 
     if (!existing) {

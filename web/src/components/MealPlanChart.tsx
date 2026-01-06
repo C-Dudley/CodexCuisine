@@ -110,81 +110,86 @@ const MealPlanChart: React.FC<MealPlanChartProps> = ({ initialData }) => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Weekly Meal Plan</h2>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-7 gap-4">
-          {weekDays.map((day) => {
-            const dayKey = day.toDateString();
-            const isToday = dayKey === today;
-            return (
-              <div
-                key={dayKey}
-                className={`border rounded-lg p-2 ${
-                  isToday ? "bg-blue-100" : "bg-white"
-                }`}
-              >
-                <h3 className="font-semibold text-center mb-2">
-                  {day.toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </h3>
-                {["Breakfast", "Lunch", "Dinner"].map((mealType) => (
-                  <Droppable
-                    key={`${dayKey}-${mealType}`}
-                    droppableId={`${dayKey}-${mealType}`}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className="min-h-[100px] border border-gray-300 rounded p-2 mb-2 bg-gray-50"
-                      >
-                        <h4 className="text-sm font-medium mb-1">{mealType}</h4>
-                        {groupedData[dayKey][mealType].map((plan, index) => (
-                          <Draggable
-                            key={plan.id}
-                            draggableId={plan.id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className="bg-white border rounded p-2 mb-1 shadow-sm"
-                              >
-                                {plan.recipe && (
-                                  <>
-                                    <div className="text-sm font-medium">
-                                      {plan.recipe.title}
-                                    </div>
-                                    <div className="text-xs text-gray-600">
-                                      {plan.recipe.cookTime
-                                        ? `${plan.recipe.cookTime} min`
-                                        : "N/A"}
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                ))}
-                <div className="text-xs text-gray-500 mt-2">
-                  Total Time:{" "}
-                  {getTotalTime(Object.values(groupedData[dayKey]).flat())} min
+      <h2 className="text-2xl md:text-3xl font-bold mb-6">Weekly Meal Plan</h2>
+      <div className="overflow-x-auto">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 min-w-full lg:min-w-0">
+            {weekDays.map((day) => {
+              const dayKey = day.toDateString();
+              const isToday = dayKey === today;
+              return (
+                <div
+                  key={dayKey}
+                  className={`border rounded-lg p-3 ${
+                    isToday ? "bg-purple-100 border-purple-300" : "bg-white border-gray-200"
+                  }`}
+                >
+                  <h3 className="font-semibold text-center mb-3 text-sm md:text-base">
+                    {day.toLocaleDateString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </h3>
+                  {["Breakfast", "Lunch", "Dinner"].map((mealType) => (
+                    <Droppable
+                      key={`${dayKey}-${mealType}`}
+                      droppableId={`${dayKey}-${mealType}`}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="min-h-[80px] md:min-h-[100px] border border-gray-300 rounded p-2 mb-2 bg-gray-50 hover:bg-gray-100 transition-colors"
+                        >
+                          <h4 className="text-xs md:text-sm font-medium mb-1 text-gray-700">
+                            {mealType}
+                          </h4>
+                          {groupedData[dayKey][mealType].map((plan, index) => (
+                            <Draggable
+                              key={plan.id}
+                              draggableId={plan.id}
+                              index={index}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`bg-white border rounded p-2 mb-1 shadow-sm text-xs transition-all ${
+                                    snapshot.isDragging ? "shadow-lg ring-2 ring-purple-500" : ""
+                                  }`}
+                                >
+                                  {plan.recipe && (
+                                    <>
+                                      <div className="font-medium line-clamp-2">
+                                        {plan.recipe.title}
+                                      </div>
+                                      <div className="text-gray-600">
+                                        {plan.recipe.cookTime
+                                          ? `${plan.recipe.cookTime}m`
+                                          : "N/A"}
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  ))}
+                  <div className="text-xs text-gray-600 mt-2 p-2 bg-gray-100 rounded font-medium">
+                    Total: {getTotalTime(Object.values(groupedData[dayKey]).flat())}m
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </DragDropContext>
+              );
+            })}
+          </div>
+        </DragDropContext>
+      </div>
     </div>
   );
 };
