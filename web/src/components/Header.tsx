@@ -95,11 +95,12 @@ export const Header: React.FC = () => {
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-xs lg:max-w-md mx-4 lg:mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                aria-label="Search recipes"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm transition-colors"
               />
             </div>
           </div>
@@ -110,7 +111,9 @@ export const Header: React.FC = () => {
               <>
                 <Link
                   to="/collections"
-                  className="text-gray-700 hover:text-purple-600 transition-colors"
+                  className="text-gray-700 hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg p-2 transition-colors"
+                  aria-label="View collections"
+                  title="View collections"
                 >
                   <Heart className="h-5 w-5" />
                 </Link>
@@ -119,13 +122,26 @@ export const Header: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="text-gray-700 hover:text-purple-600 transition-colors"
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setShowUserMenu(false);
+                      if (e.key === " " || e.key === "Enter") {
+                        e.preventDefault();
+                        setShowUserMenu(!showUserMenu);
+                      }
+                    }}
+                    aria-label="Open user menu"
+                    aria-expanded={showUserMenu}
+                    aria-haspopup="true"
+                    className="text-gray-700 hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg p-2 transition-colors"
                   >
                     <User className="h-5 w-5" />
                   </button>
 
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 py-2">
+                    <div
+                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 py-2"
+                      role="menu"
+                    >
                       <div className="px-4 py-2 border-b">
                         <p className="text-sm font-semibold text-gray-900">
                           {user.email}
@@ -137,8 +153,9 @@ export const Header: React.FC = () => {
 
                       <Link
                         to="/profile"
-                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors flex items-center gap-2"
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors flex items-center gap-2"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <User className="h-4 w-4" />
                         Profile
@@ -146,8 +163,9 @@ export const Header: React.FC = () => {
 
                       <Link
                         to="/preferences"
-                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors flex items-center gap-2"
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors flex items-center gap-2"
                         onClick={() => setShowUserMenu(false)}
+                        role="menuitem"
                       >
                         <Settings className="h-4 w-4" />
                         Preferences
@@ -155,7 +173,8 @@ export const Header: React.FC = () => {
 
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none transition-colors flex items-center gap-2"
+                        role="menuitem"
                       >
                         <LogOut className="h-4 w-4" />
                         Sign Out
@@ -168,13 +187,13 @@ export const Header: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm"
+                  className="text-gray-700 hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg px-3 py-2 transition-colors font-medium text-sm"
                 >
                   Sign In
                 </button>
                 <button
                   onClick={() => navigate("/signup")}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors font-medium text-sm"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-2 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors font-medium text-sm"
                 >
                   Sign Up
                 </button>
@@ -198,35 +217,41 @@ export const Header: React.FC = () => {
 
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="lg:hidden pb-4 border-t">
+          <div
+            className="lg:hidden pb-4 border-t"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setShowMobileMenu(false);
+            }}
+          >
             <div className="py-3">
               <div className="relative px-2 mb-3">
-                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                  aria-label="Search recipes (mobile)"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm transition-colors"
                 />
               </div>
             </div>
             <nav className="space-y-1">
               <Link
                 to="/"
-                className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                 onClick={() => setShowMobileMenu(false)}
               >
                 Home
               </Link>
               <Link
                 to="/discover"
-                className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                 onClick={() => setShowMobileMenu(false)}
               >
                 Discover
               </Link>
               <Link
                 to="/videos"
-                className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                 onClick={() => setShowMobileMenu(false)}
               >
                 Videos
@@ -235,42 +260,42 @@ export const Header: React.FC = () => {
                 <>
                   <Link
                     to="/meal-plan"
-                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Meal Plan
                   </Link>
                   <Link
                     to="/shopping-list"
-                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Shopping List
                   </Link>
                   <Link
                     to="/preferences"
-                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Preferences
                   </Link>
                   <Link
                     to="/collections"
-                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     Collections
                   </Link>
                   <Link
                     to="/profile"
-                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                     onClick={() => setShowMobileMenu(false)}
                   >
                     My Profile
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors font-medium"
+                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none transition-colors font-medium"
                   >
                     Sign Out
                   </button>
@@ -283,7 +308,7 @@ export const Header: React.FC = () => {
                       navigate("/login");
                       setShowMobileMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none transition-colors"
                   >
                     Sign In
                   </button>
@@ -292,7 +317,7 @@ export const Header: React.FC = () => {
                       navigate("/signup");
                       setShowMobileMenu(false);
                     }}
-                    className="block w-full mx-2 text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-colors font-medium rounded-lg"
+                    className="block w-full mx-2 text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors font-medium rounded-lg"
                   >
                     Sign Up
                   </button>

@@ -314,17 +314,33 @@ const RecipePage: React.FC = () => {
 
         {/* Meal Plan Modal */}
         {showMealPlanModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+            role="presentation"
+            onClick={() => setShowMealPlanModal(false)}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setShowMealPlanModal(false);
+                }
+              }}
+            >
               {/* Modal Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
                   Add to Meal Plan
                 </h2>
                 <button
                   onClick={() => setShowMealPlanModal(false)}
                   disabled={addToMealPlanMutation.isPending}
-                  className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                  aria-label="Close modal"
+                  className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg p-1 disabled:opacity-50"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -340,7 +356,10 @@ const RecipePage: React.FC = () => {
               >
                 {/* Error Message */}
                 {addToMealPlanMutation.error && (
-                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  <div
+                    className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
+                    role="alert"
+                  >
                     {(addToMealPlanMutation.error as any)?.response?.data?.error
                       ?.message ||
                       "Failed to add recipe to meal plan. Please try again."}
@@ -349,10 +368,14 @@ const RecipePage: React.FC = () => {
 
                 {/* Meal Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="meal-type"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Meal Type
                   </label>
                   <select
+                    id="meal-type"
                     value={selectedMealType}
                     onChange={(e) =>
                       setSelectedMealType(
@@ -360,7 +383,7 @@ const RecipePage: React.FC = () => {
                       )
                     }
                     disabled={addToMealPlanMutation.isPending}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
                   >
                     <option value="Breakfast">Breakfast</option>
                     <option value="Lunch">Lunch</option>
@@ -370,15 +393,19 @@ const RecipePage: React.FC = () => {
 
                 {/* Date */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="meal-date"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Date
                   </label>
                   <input
+                    id="meal-date"
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
                     disabled={addToMealPlanMutation.isPending}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
                   />
                 </div>
 
@@ -401,14 +428,14 @@ const RecipePage: React.FC = () => {
                     type="button"
                     onClick={() => setShowMealPlanModal(false)}
                     disabled={addToMealPlanMutation.isPending}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={addToMealPlanMutation.isPending}
-                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white rounded-lg font-medium disabled:cursor-not-allowed transition-colors"
+                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-400 text-white rounded-lg font-medium disabled:cursor-not-allowed transition-colors"
                   >
                     {addToMealPlanMutation.isPending ? "Adding..." : "Add to Plan"}
                   </button>
