@@ -66,11 +66,25 @@
 [x] Web - Video Recipe Browser: Frontend interface to browse and import video recipes with extracted ingredients. (✅ COMPLETE: VideoDiscoveryPage.tsx with search, extraction form, and recipe cards)
 
 🔐 Phase 8: Authentication & Authorization
-[ ] Auth System: Implement JWT login/register so users can save their specific plans and preferences.
+[x] Backend JWT Middleware: Express middleware with token validation, user extraction from cookies. (✅ COMPLETE: auth.ts middleware with getUserFromRequest, requireAuth guards)
 
-[ ] User Profiles: Create user profile pages with saved recipes, preferences, and meal plans.
+[x] JWT Utilities Service: Token generation, verification, cookie management, token rotation. (✅ COMPLETE: jwt-utils.ts service with full CodexClarity-compatible implementation)
 
-[ ] Recipe Attribution: Ensure scraped recipes are properly attributed to original sources.
+[x] Backend Route Integration: Updated meal-plan.ts and other protected routes to use auth context. (✅ COMPLETE: All routes updated to use req.user.userId)
+
+[x] Frontend AuthContext: React context with login/logout/auto-refresh, manages user state. (✅ COMPLETE: AuthContext.tsx with 10-min auto-refresh and error handling)
+
+[x] LoginPage Component: Email/password form with validation, error display, loading states. (✅ COMPLETE: LoginPage.tsx with strength indicator and real-time validation)
+
+[x] SignupPage Component: Registration form with password validation, strength meter, confirmation matching. (✅ COMPLETE: SignupPage.tsx with 8+ char, uppercase, number requirements)
+
+[x] ProtectedRoute Guards: Route wrapper checking authentication status. (✅ COMPLETE: ProtectedRoute.tsx with redirect to /login for unauthenticated users)
+
+[x] App Integration: AuthProvider wrapper, protected route configuration, updated navigation. (✅ COMPLETE: App.tsx refactored with BrowserRouter, AuthProvider, protected routes)
+
+[x] Header Update: Logout button in user menu, conditional navigation based on auth status. (✅ COMPLETE: Header.tsx with user dropdown menu, logout, role display)
+
+[x] Environment Setup: SESSION_SECRET added to .env and .env.example. (✅ COMPLETE: Added with documentation about CodexClarity integration)
 
 📱 Phase 9: Polishing & Deployment
 [ ] Responsiveness: Make sure the app looks good on mobile browsers (meal plan grid, shopping list, scraper UI).

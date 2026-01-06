@@ -6,10 +6,10 @@
  * Shows loading spinner while checking auth status
  */
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { Loader } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { Loader } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

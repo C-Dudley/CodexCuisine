@@ -103,6 +103,7 @@ export function generateTokenPair(
 
 /**
  * Verify and decode a JWT token
+ * Accepts tokens from both CodexClarity and CodexCuisine issuers
  */
 export function verifyToken(
   token: string,
@@ -114,10 +115,22 @@ export function verifyToken(
   }
 
   try {
-    const decoded = jwt.verify(token, secret, {
-      issuer: "codexcuisine",
-      audience: "codexcuisine-api",
-    }) as DecodedToken;
+    // Try to verify with either issuer (CodexClarity or CodexCuisine)
+    // This allows tokens from CodexClarity to work with CodexCuisine backend
+    let decoded: DecodedToken | null = null;
+
+    try {
+      decoded = jwt.verify(token, secret, {
+        issuer: "codexclarity",
+        audience: "codexclarity-api",
+      }) as DecodedToken;
+    } catch (err) {
+      // If CodexClarity verification fails, try CodexCuisine
+      decoded = jwt.verify(token, secret, {
+        issuer: "codexcuisine",
+        audience: "codexcuisine-api",
+      }) as DecodedToken;
+    }
 
     // Verify token type
     if (decoded.type !== expectedType) {

@@ -18,12 +18,16 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [passwordStrength, setPasswordStrength] = useState<"weak" | "fair" | "strong" | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState<
+    "weak" | "fair" | "strong" | null
+  >(null);
   const { signUp, loading, error: authError } = useAuth();
 
   const displayError = localError || authError;
 
-  const calculatePasswordStrength = (pwd: string): "weak" | "fair" | "strong" => {
+  const calculatePasswordStrength = (
+    pwd: string
+  ): "weak" | "fair" | "strong" => {
     let strength = 0;
     if (pwd.length >= 8) strength++;
     if (pwd.length >= 12) strength++;
@@ -116,7 +120,10 @@ const SignupPage: React.FC = () => {
         >
           {/* Email Input */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Email Address
             </label>
             <div className="relative">
@@ -138,7 +145,10 @@ const SignupPage: React.FC = () => {
 
           {/* Password Input */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Password
             </label>
             <div className="relative">
@@ -203,7 +213,11 @@ const SignupPage: React.FC = () => {
 
             {/* Password Requirements */}
             <ul className="mt-3 text-xs text-gray-600 space-y-1">
-              <li className={`flex items-center gap-2 ${password.length >= 8 ? "text-green-600" : ""}`}>
+              <li
+                className={`flex items-center gap-2 ${
+                  password.length >= 8 ? "text-green-600" : ""
+                }`}
+              >
                 {password.length >= 8 ? (
                   <CheckCircle className="h-3 w-3" />
                 ) : (
@@ -211,7 +225,11 @@ const SignupPage: React.FC = () => {
                 )}
                 At least 8 characters
               </li>
-              <li className={`flex items-center gap-2 ${/[A-Z]/.test(password) ? "text-green-600" : ""}`}>
+              <li
+                className={`flex items-center gap-2 ${
+                  /[A-Z]/.test(password) ? "text-green-600" : ""
+                }`}
+              >
                 {/[A-Z]/.test(password) ? (
                   <CheckCircle className="h-3 w-3" />
                 ) : (
@@ -219,7 +237,11 @@ const SignupPage: React.FC = () => {
                 )}
                 One uppercase letter
               </li>
-              <li className={`flex items-center gap-2 ${/[0-9]/.test(password) ? "text-green-600" : ""}`}>
+              <li
+                className={`flex items-center gap-2 ${
+                  /[0-9]/.test(password) ? "text-green-600" : ""
+                }`}
+              >
                 {/[0-9]/.test(password) ? (
                   <CheckCircle className="h-3 w-3" />
                 ) : (
@@ -232,7 +254,10 @@ const SignupPage: React.FC = () => {
 
           {/* Confirm Password Input */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Confirm Password
             </label>
             <div className="relative">
@@ -263,10 +288,14 @@ const SignupPage: React.FC = () => {
             {confirmPassword && password && (
               <p
                 className={`mt-2 text-sm font-medium ${
-                  password === confirmPassword ? "text-green-600" : "text-red-600"
+                  password === confirmPassword
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
-                {password === confirmPassword ? "✓ Passwords match" : "✗ Passwords do not match"}
+                {password === confirmPassword
+                  ? "✓ Passwords match"
+                  : "✗ Passwords do not match"}
               </p>
             )}
           </div>
@@ -295,7 +324,9 @@ const SignupPage: React.FC = () => {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Already have an account?</span>
+              <span className="px-2 bg-white text-gray-500">
+                Already have an account?
+              </span>
             </div>
           </div>
 
@@ -310,7 +341,8 @@ const SignupPage: React.FC = () => {
 
         {/* Footer */}
         <p className="text-center text-gray-600 text-sm mt-6">
-          By creating an account, you agree to our Terms of Service and Privacy Policy
+          By creating an account, you agree to our Terms of Service and Privacy
+          Policy
         </p>
       </div>
     </div>

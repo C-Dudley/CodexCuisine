@@ -123,8 +123,12 @@ export const Header: React.FC = () => {
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 py-2">
                       <div className="px-4 py-2 border-b">
-                        <p className="text-sm font-semibold text-gray-900">{user.email}</p>
-                        <p className="text-xs text-gray-600">{user.role || "User"}</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {user.email}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {user.role || "User"}
+                        </p>
                       </div>
 
                       <Link

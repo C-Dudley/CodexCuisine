@@ -1,13 +1,23 @@
 /**
  * AuthContext - Authentication State Management
  *
- * Manages user authentication state and provides login/logout/refresh functions
+ * Integrates with CodexClarity's authentication system for shared sign-on
  * Uses httpOnly cookies for secure token storage (automatically handled by fetch)
  * Auto-refreshes tokens 10 minutes before expiry to keep user logged in
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import { useNavigate } from "react-router-dom";
+
+// Get CodexClarity URL from environment
+const CODEXCLARITY_URL =
+  process.env.REACT_APP_CODEXCLARITY_URL || "https://codexclarity.com";
 
 export interface User {
   userId: string;
@@ -31,32 +41,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 /**
  * AuthProvider component - wrap your app with this
  */
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   /**
-   * Check if user is already logged in by calling /api/auth/session
+   * Check if user is already logged in by calling CodexClarity's /api/auth/session
    */
   const checkSession = useCallback(async () => {
     try {
-      // This endpoint should be created on the backend
-      // For now, we assume it validates the existing JWT cookie
-      const response = await fetch('/api/auth/session', {
-        credentials: 'include', // Important: includes httpOnly cookies
+      // Call CodexClarity's session endpoint
+      const response = await fetch(`${CODEXCLARITY_URL}/api/auth/session`, {
+        credentials: "include", // Important: includes httpOnly cookies
       });
 
       if (response.ok) {
         const data = await response.json();
-        if (data.user) {
-          setUser(data.user);
+        if (data.data) {
+          setUser(data.data);
         }
       }
       // If response is not ok, user is not logged in (no error needed)
     } catch (err) {
-      console.error('Session check failed:', err);
+      console.error("Session check failed:", err);
       // Network error or endpoint not available - this is ok during development
     } finally {
       setLoading(false);
@@ -64,26 +75,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   /**
-   * Refresh the access token using the refresh token
+   * Refresh the access token using CodexClarity's refresh endpoint
    */
   const refreshSession = useCallback(async () => {
     try {
-      const response = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        credentials: 'include',
+      const response = await fetch(`${CODEXCLARITY_URL}/api/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
       });
 
       if (response.ok) {
         const data = await response.json();
-        if (data.user) {
-          setUser(data.user);
+        if (data.data) {
+          setUser(data.data);
         }
       } else if (response.status === 401) {
         // Refresh token expired - logout
         setUser(null);
       }
     } catch (err) {
-      console.error('Token refresh failed:', err);
+      console.error("Token refresh failed:", err);
       setUser(null);
     }
   }, []);
@@ -118,19 +129,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setError(null);
         setLoading(true);
 
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
+        const response = await fetch(`${CODEXCLARITY_URL}/api/auth/login`, {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          credentials: 'include',
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
-            errorData.error?.message || 'Login failed. Please try again.'
+            errorData.error?.message || "Login failed. Please try again."
           );
         }
 
@@ -139,16 +150,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (data.data?.requiresMfa) {
           // MFA required - in Phase 8.2 we handle basic flow
           // TODO: Implement MFA verification page
-          setError('MFA verification required - feature coming soon');
+          setError("MFA verification required - feature coming soon");
           return;
         }
 
         if (data.data) {
           setUser(data.data);
-          navigate('/'); // Redirect to home
+          navigate("/"); // Redirect to home
         }
       } catch (err: any) {
-        const message = err.message || 'Login failed. Please try again.';
+        const message = err.message || "Login failed. Please try again.";
         setError(message);
         throw err;
       } finally {
@@ -168,19 +179,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setError(null);
         setLoading(true);
 
-        const response = await fetch('/api/auth/signup', {
-          method: 'POST',
+        const response = await fetch(`${CODEXCLARITY_URL}/api/auth/signup`, {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          credentials: 'include',
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
-            errorData.error?.message || 'Sign up failed. Please try again.'
+            errorData.error?.message || "Sign up failed. Please try again."
           );
         }
 
@@ -188,10 +199,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (data.data) {
           setUser(data.data);
-          navigate('/'); // Redirect to home
+          navigate("/"); // Redirect to home
         }
       } catch (err: any) {
-        const message = err.message || 'Sign up failed. Please try again.';
+        const message = err.message || "Sign up failed. Please try again.";
         setError(message);
         throw err;
       } finally {
@@ -202,22 +213,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   /**
-   * Logout - clear session on backend and clear local state
+   * Logout - clear session on CodexClarity and clear local state
    */
   const logout = useCallback(async () => {
     try {
-      // Call logout endpoint to clear session
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
+      // Call CodexClarity's logout endpoint to clear session
+      await fetch(`${CODEXCLARITY_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
       }).catch(() => {
-        // Logout endpoint might not exist yet - continue anyway
+        // Logout endpoint might fail - continue anyway
       });
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error("Logout error:", err);
     } finally {
       setUser(null);
-      navigate('/login');
+      navigate("/login");
     }
   }, [navigate]);
 
@@ -248,7 +259,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
